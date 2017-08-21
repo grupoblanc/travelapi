@@ -1,0 +1,22 @@
+extends layout
+block content
+	h1 #{title}
+	br
+	form.form(action="textsearch")
+		div.form-group(class="col-sm-12")
+			label.col-sm-offset-1(class="col-sm-2" for="query") Google Search
+			div.col-sm-9
+				input.form-control(type="text" placeholder="Google Place Search" id="query" name="query")
+		div.form-group(class="col-sm-12")
+			label.col-sm-offset-1(class="col-sm-2" for="description") Place City
+			div.col-sm-9
+				select.form-control(id="city" name="city")
+					each city in cities
+						option(value=city._id)= city.name
+
+		div.form-group(class="col-sm-12")
+			label.col-sm-offset-1(class="col-sm-2" for="type") Place Type
+			div.col-sm-9
+				input.form-control(type="text" placeholder="Place Type Ex: restaurant, park, hotel..." id="place_type" name="place_type")
+
+		button.col-sm-offset-1(type="submit" class="btn btn-danger") Import

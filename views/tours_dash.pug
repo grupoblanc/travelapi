@@ -1,0 +1,13 @@
+extends layout
+block content
+	h1 #{title}
+	table.table(class='')
+		thead
+			tr
+				th #
+				th Name
+		tbody
+			each tour, i in tours
+				tr
+					td #{i+1}
+					td #{place.name}

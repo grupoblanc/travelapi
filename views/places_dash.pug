@@ -1,0 +1,31 @@
+extends layout
+block content
+	h1 #{title}
+	a(href='places/create', class="btn btn-danger") Import from Google
+	a(href='places/search', class="btn btn-info") Search from Google
+	br
+	table.table(class='')
+		thead
+			tr
+				th #
+				th Name
+				th City
+				th Location
+				th Type
+				th Created At
+				th Google ID
+				th Actions
+		tbody
+			each place, i in places
+				tr
+					td #{i+1}
+					td #{place.name}
+					td #{place.city.name}
+					td #{place.location.lat},#{place.location.lng}
+					td #{place.type}
+					td #{place.createdAt}
+					td #{place.googleId}
+					td
+						a(href="places/edit/" + place._id) Edit
+						br
+						a(href="places/remove/" + place._id)  Delete

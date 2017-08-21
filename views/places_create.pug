@@ -1,0 +1,52 @@
+extends layout
+block content
+	h1 #{title}
+	if place !== undefined
+		form.form(action="../edit" method="POST")
+			input(type="hidden" value=place._id name="_id")
+			div.form-group(class="col-sm-12")
+				label.col-sm-offset-1(class="col-sm-2" for="google_id") Google Place ID
+				div.col-sm-9
+					input.form-control(type="text" placeholder="Google Place ID" id="google_id" name="google_id" value=place.googleId)
+
+			div.form-group(class="col-sm-12")
+				label.col-sm-offset-1(class="col-sm-2" for="description") Place Description
+				div.col-sm-9
+					input.form-control(type="text" placeholder="Place description" id="description" name="description" value=place.description)
+			div.form-group(class="col-sm-12")
+				label.col-sm-offset-1(class="col-sm-2" for="description") Place City
+				div.col-sm-9
+					select.form-control(id="city" name="city")
+						each city in cities
+							option(value=city._id)= city.name
+
+			div.form-group(class="col-sm-12")
+				label.col-sm-offset-1(class="col-sm-2" for="type") Place Type
+				div.col-sm-9
+					input.form-control(type="text" placeholder="Place Type Ex: restaurant, park, hotel..." id="place_type" name="place_type" value=place.type)
+
+			button.col-sm-offset-1(type="submit" class="btn btn-danger") Update
+	else
+		form.form(action="fromgoogle" method="POST")
+				div.form-group(class="col-sm-12")
+					label.col-sm-offset-1(class="col-sm-2" for="google_id") Google Place ID
+					div.col-sm-9
+						input.form-control(type="text" placeholder="Google Place ID" id="google_id" name="google_id")
+
+				div.form-group(class="col-sm-12")
+					label.col-sm-offset-1(class="col-sm-2" for="description") Place Description
+					div.col-sm-9
+						input.form-control(type="text" placeholder="Place description" id="description" name="description")
+				div.form-group(class="col-sm-12")
+					label.col-sm-offset-1(class="col-sm-2" for="description") Place City
+					div.col-sm-9
+						select.form-control(id="city" name="city")
+							each city in cities
+								option(value=city._id)= city.name
+
+				div.form-group(class="col-sm-12")
+					label.col-sm-offset-1(class="col-sm-2" for="type") Place Type
+					div.col-sm-9
+						input.form-control(type="text" placeholder="Place Type Ex: restaurant, park, hotel..." id="place_type" name="place_type")
+
+				button.col-sm-offset-1(type="submit" class="btn btn-danger") Import from Google

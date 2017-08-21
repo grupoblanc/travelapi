@@ -1,0 +1,33 @@
+extends layout
+block content
+	h1 #{title}
+	table.table(class='')
+		thead
+			tr
+				th #
+				th Name
+				th Location
+				th Created At
+				th Google ID
+				th Actions
+		tbody
+			each city, i in cities
+				tr
+					td #{i+1}
+					td #{city.name}
+					td #{city.location.lat},#{city.location.lng}
+					td #{city.createdAt}
+					td #{city.googleId}
+					td
+						a(href="edit/" + city._id) Edit
+						br
+						a(href="remove/" + city._id)  Delete
+
+	a(href='cities/create', class="btn btn-primary") Create New
+	p
+	form.form(action='cities/fromgoogle' class="form-inline" method="POST")
+		div.form-group
+			input.form-control(type="text" placeholder="Google Place ID" id="google_id" name="google_id")
+		div.form-group
+			input.form-control(type="text" placeholder="City Parent (country or region)" id="parent" name="parent")
+		button(type="submit" class="btn btn-danger") Import from Google

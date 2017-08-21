@@ -1,0 +1,23 @@
+{
+  "name": "tripguideapi",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "connect-mongo": "^1.3.2",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "express-prettify": "0.0.8",
+    "express-session": "^1.15.5",
+    "mongoose": "^4.11.7",
+    "morgan": "~1.8.1",
+    "nodemon": "^1.11.0",
+    "pug": "~2.0.0-beta11",
+    "request": "^2.81.0",
+    "serve-favicon": "~2.4.2"
+  }
+}
