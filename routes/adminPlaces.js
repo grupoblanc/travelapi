@@ -100,7 +100,7 @@ router.post('/fromgoogle', function(req,res, next) {
 					place.photo.width = photo.width;
 				}
 				place.website = googlePlace.website;
-				place.phoneNumber = googlePlace.international_phone_number !== undefined ?
+				place.phone_number = googlePlace.international_phone_number !== undefined ?
 					googlePlace.international_phone_number : googlePlace.formatted_phone_number;
 				place.address = googlePlace.formatted_address !== undefined ?
 					googlePlace.formatted_address : googlePlace.vicinity;
