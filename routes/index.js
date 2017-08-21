@@ -1,5 +1,6 @@
 let express = require('express');
 let router = express.Router();
+let shuffle = require('shuffle-array');
 
 let Place = require('../models/place');
 let Tour  = require('../models/tour');
@@ -107,24 +108,19 @@ router.get('/cities/:id', function(req, res, next) {
 				places: {
 					$push: '$$ROOT'
 					}
-				}
-			},
-			{ $project: {
-            	places: {
-            		$slice: [ "$places", 6 ]
-            		}
-          		}
-          	},
-          	{ $sort: {
-          		createdAt: -1
-          	}
+				},
 
-          	}
-		]).then(function(places) {
+			}
+		]).then(function(topics) {
+			topics.forEach(function (topic) {
+				topic.places = shuffle.pick(topic.places, {
+					'picks': 6
+				});
+			});
 			res.json({
 				city: {
 					...city._doc,
-					topics: places,
+					topics: topics,
 				},
 				result: "OK"
 			});
