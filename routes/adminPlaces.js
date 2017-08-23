@@ -109,9 +109,9 @@ router.post('/fromgoogle', function(req,res, next) {
 					place.opening_hours.weekdays = googlePlace.opening_hours.weekday_text
 				}
 				if (req.body.place_type !== undefined && req.body.place_type !== "") {
-					place.type = req.body.place_type.split(",");;
+					place.types = req.body.place_type.split(",");;
 				} else {
-					place.type = googlePlace.types;
+					place.types = googlePlace.types;
 				}
 				place.save().then(function(place) {
 					res.redirect('/api/site/admin/places');
@@ -177,9 +177,9 @@ router.get('/textsearch', function(req, res, next) {
 										place.opening_hours.weekdays = googlePlace.opening_hours.weekday_text
 									}
 									if (req.query.place_type !== undefined && req.query.place_type !== "") {
-										place.type = req.query.place_type.split(",");
+										place.types = req.query.place_type.split(",");
 									} else {
-										place.type = googlePlace.types;
+										place.types = googlePlace.types;
 									}
 									place.save().then(function(place) {
 									}).catch(function (err) {
