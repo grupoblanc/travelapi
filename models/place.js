@@ -40,7 +40,7 @@ let placeSchema = new Schema({
 			type: [String],
 		}
 	},
-	type: String,
+	types: [String],
 	website: String,
 	createdAt: {
 		type: Date,

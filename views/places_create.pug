@@ -23,7 +23,7 @@ block content
 			div.form-group(class="col-sm-12")
 				label.col-sm-offset-1(class="col-sm-2" for="type") Place Type
 				div.col-sm-9
-					input.form-control(type="text" placeholder="Place Type Ex: restaurant, park, hotel..." id="place_type" name="place_type" value=place.type)
+					input.form-control(type="text" placeholder="Place Type Ex: restaurant, park, hotel..." id="place_type" name="place_type" value=place.types.join(","))
 
 			button.col-sm-offset-1(type="submit" class="btn btn-danger") Update
 	else

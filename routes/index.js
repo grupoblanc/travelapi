@@ -99,12 +99,13 @@ router.get('/cities/:id', function(req, res, next) {
 	}
 	City.findById(req.params.id).then(function(city) {
 		Place.aggregate([
+			{ $unwind: '$types'},
 			{ $match: {
 				city: city._id
 				}
 			},
 			{ $group: {
-				_id: '$type',
+				_id: '$types',
 				places: {
 					$push: '$$ROOT'
 					}
