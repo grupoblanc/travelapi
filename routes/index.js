@@ -98,21 +98,16 @@ router.get('/cities/:id', function(req, res, next) {
 		});
 	}
 	City.findById(req.params.id).then(function(city) {
-		Place.aggregate([
-			{ $unwind: '$types'},
-			{ $match: {
-				city: city._id
-				}
+		Place.aggregate()
+		.unwind("types")
+		.match({ city: city._id})
+		.group({
+			_id: '$types',
+			places: {
+				$push: '$$CURRENT'
 			},
-			{ $group: {
-				_id: '$types',
-				places: {
-					$push: '$$ROOT'
-					}
-				},
-
-			}
-		]).then(function(topics) {
+		})
+		.then(function(topics) {
 			topics.forEach(function (topic) {
 				topic.places = shuffle.pick(topic.places, {
 					'picks': 6
