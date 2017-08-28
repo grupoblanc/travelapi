@@ -1,6 +1,8 @@
 let express = require('express');
 let router = express.Router();
+let request = require("request");
 let shuffle = require('shuffle-array');
+let ObjectId = require('mongoose').Types.ObjectId;
 
 let Place = require('../models/place');
 let Tour  = require('../models/tour');
@@ -90,37 +92,80 @@ router.get('/cities', function (req, res, next) {
 	})
 });
 
+function  getObjectId(param) {
+	return new ObjectId((!ObjectId.isValid(param))
+		? "123456789012" : param);
+}
+
 router.get('/cities/:id', function(req, res, next) {
 	fnerror = function(err) {
 		console.log(err);
-		res.json({
+		return res.json({
 			status: err.message
 		});
-	}
-	City.findById(req.params.id).then(function(city) {
-		Place.aggregate()
-		.unwind("types")
-		.match({ city: city._id})
-		.group({
-			_id: '$types',
-			places: {
-				$push: '$$CURRENT'
-			},
-		})
-		.then(function(topics) {
-			topics.forEach(function (topic) {
-				topic.places = shuffle.pick(topic.places, {
-					'picks': 6
-				});
-			});
-			res.json({
-				city: {
-					...city._doc,
-					topics: topics,
+	};
+	City.findOne({$or: [
+		{_id: getObjectId(req.params.id) },
+		{googleId: req.params.id} ]
+	}).then(function(city) {
+		if (city) {
+			Place.aggregate()
+			.unwind("types")
+			.match({ city: city._id})
+			.group({
+				_id: '$types',
+				places: {
+					$push: '$$CURRENT'
 				},
-				result: "OK"
+			})
+			.then(function(topics) {
+				topics.forEach(function (topic) {
+					topic.places = shuffle.pick(topic.places, {
+						'picks': 6
+					});
+				});
+				res.json({
+					city: {
+						...city._doc,
+						topics: topics,
+					},
+					result: "OK"
+				});
+			}).catch(fnerror);
+		} else {
+			if (req.params.id.length == 27) {
+				// google city
+				let googleId = req.params.id;
+				request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
+				googleId +
+				'&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q', function (error, response, body) {
+					googleResponse = JSON.parse(body);
+					if (googleResponse.status === "OK") {
+						googlePlace = googleResponse.result;
+						let city =  new City();
+						city.name = googlePlace.name;
+						city.googleId = googlePlace.place_id;
+						city.location.lat = googlePlace.geometry.location.lat;
+						city.location.lng = googlePlace.geometry.location.lng;
+						let photo = googlePlace.photos[0];
+						city.photo.reference = photo.photo_reference;
+						city.photo.width = photo.width;
+						city.topics = [];
+						return res.json({
+							city: {
+								...city._doc,
+								topics: []
+							},
+							result: "OK"
+						});
+					}
 			});
-		}).catch(fnerror)
+			} else {
+				return res.json({
+					status: "Not found"
+				});
+			}
+		}
 	}).catch(fnerror);
 });
 
