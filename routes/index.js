@@ -20,7 +20,10 @@ router.get('/', function(req, res, next) {
 
 
 router.get('/places', function(req, res, next) {
-	Place.find({}).sort('-createdAt').then(function (places) {
+	Place.find({})
+	.populate('city')
+	.sort('-createdAt')
+	.then(function (places) {
 		res.json({
 			places,
 			status: "OK"
@@ -35,7 +38,9 @@ router.get('/places', function(req, res, next) {
 });
 
 router.get('/places/:id', function(req, res, next) {
-	Place.findById(req.params.id).then(function(place) {
+	Place.findById(req.params.id)
+	.populate('city')
+	.then(function(place) {
 		res.json({
 			place,
 			status: "OK"
@@ -48,7 +53,9 @@ router.get('/places/:id', function(req, res, next) {
 });
 
 router.get('/tours', function (req, res, next) {
-	Place.find({types: { $in: ['tour']}}).sort('-createdAt').then(function (places) {
+	Place.find({types: { $in: ['tour']}})
+	.populate('city')
+	.sort('-createdAt').then(function (places) {
 		res.json({
 			places,
 			status: "OK"
@@ -63,7 +70,9 @@ router.get('/tours', function (req, res, next) {
 });
 
 router.get('/tours/all', function (req, res, next) {
-	Tour.find({}).sort('-createdAt').then(function (tours) {
+	Tour.find({})
+	.populate('city')
+	.sort('-createdAt').then(function (tours) {
 		res.json({
 			tours,
 			status: "OK"
@@ -79,7 +88,9 @@ router.get('/tours/all', function (req, res, next) {
 
 
 router.get('/tours/:id', function (req, res, next) {
-	Place.findById(req.params.id).then(function (place) {
+	Place.findById(req.params.id)
+	.populate('city')
+	.then(function (place) {
 		Tour.find({parent: place._id}).sort('-createdAt').then(function (tours) {
 			res.json({
 				place: {
@@ -98,7 +109,9 @@ router.get('/tours/:id', function (req, res, next) {
 });
 
 router.get('/tours/all/:id', function (req, res, next) {
-	Tour.findById(req.params.id).then(function (tour) {
+	Tour.findById(req.params.id)
+	.populate('city')
+	.then(function (tour) {
 		res.json({
 			tour: tour,
 			status: "OK"
