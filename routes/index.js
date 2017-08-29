@@ -48,6 +48,21 @@ router.get('/places/:id', function(req, res, next) {
 });
 
 router.get('/tours', function (req, res, next) {
+	Place.find({types: { $in: ['tour']}}).sort('-createdAt').then(function (places) {
+		res.json({
+			places,
+			status: "OK"
+		});
+	}).catch(function(err) {
+		console.log(err);
+		res.json({
+			tours: [],
+			status: err.message
+		});
+	})
+});
+
+router.get('/tours/all', function (req, res, next) {
 	Tour.find({}).sort('-createdAt').then(function (tours) {
 		res.json({
 			tours,
@@ -64,9 +79,28 @@ router.get('/tours', function (req, res, next) {
 
 
 router.get('/tours/:id', function (req, res, next) {
+	Place.findById(req.params.id).then(function (place) {
+		Tour.find({parent: place._id}).sort('-createdAt').then(function (tours) {
+			res.json({
+				place: {
+					...place._doc,
+					tours: tours
+				},
+				status: "OK"
+			})
+		});
+	}).catch(function(err) {
+		console.log(err);
+		res.json({
+			status: err.message
+		});
+	})
+});
+
+router.get('/tours/all/:id', function (req, res, next) {
 	Tour.findById(req.params.id).then(function (tour) {
 		res.json({
-			tour,
+			tour: tour,
 			status: "OK"
 		});
 	}).catch(function(err) {

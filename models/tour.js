@@ -11,6 +11,10 @@ let tourSchema = new Schema({
 		type: Schema.ObjectId,
 		ref: 'City'
 	},
+	parent: {
+		type: Schema.ObjectId,
+		ref: 'Place'
+	},
 	totalTime: Number,
 	totalDistance: Number,
 	photo: {
@@ -22,6 +26,10 @@ let tourSchema = new Schema({
 			type: Schema.ObjectId,
 			ref: 'Place'
 		}]
+	},
+	createdAt: {
+		type: Date,
+		default: Date.now()
 	}
 });
 
