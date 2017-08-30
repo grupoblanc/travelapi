@@ -44,6 +44,7 @@ let placeSchema = new Schema({
 			type: [String],
 		}
 	},
+	rating: Number,
 	types: [String],
 	website: String,
 	createdAt: {

@@ -95,6 +95,7 @@ router.post('/fromgoogle', function(req,res, next) {
 				place.googleId = googlePlace.place_id;
 				place.location.lat = googlePlace.geometry.location.lat;
 				place.location.lng = googlePlace.geometry.location.lng;
+				place.rating = googlePlace.rating;
 				if (googlePlace.photos !== undefined) {
 					place.photos = googlePlace.photos;
 					let photo = googlePlace.photos[0];
@@ -170,6 +171,7 @@ router.get('/textsearch', function(req, res, next) {
 									place.googleId = googlePlace.place_id;
 									place.location.lat = googlePlace.geometry.location.lat;
 									place.location.lng = googlePlace.geometry.location.lng;
+									place.rating = googlePlace.rating;
 									if (googlePlace.photos !== undefined) {
 										place.photos = googlePlace.photos;
 										let photo = googlePlace.photos[0];
