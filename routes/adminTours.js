@@ -3,6 +3,7 @@ const request = require('request');
 let router = express.Router();
 
 let Tour  = require('../models/tour');
+let Place = require('../models/place');
 
 router.get('/', function (req, res, next) {
 	Tour.find({}).sort('-createdAt').then(function (results) {
@@ -14,6 +15,43 @@ router.get('/', function (req, res, next) {
 		console.log(err);
 		res.json({
 			results: [],
+			status: err.message
+		});
+	});
+});
+
+router.get('/create/:city_id', function(req, res, next) {
+	Place.find({'city': req.params.city_id})
+	.then(function(places) {
+		Place.find({ types: {"$in": ["tour"]}})
+		.then(function(tours) {
+			res.render('tours_create', {
+				title: 'Create Tour',
+				tours: tours,
+				places: places,
+			});
+		}).catch(function(err) {
+			console.log(err);
+			res.json({
+				status: err.message
+			});
+		});
+	}).catch(function (err) {
+		console.log(err);
+		res.json({
+			status: err.message
+		});
+	});
+
+});
+
+router.post('/create/:city_id', function(req, res) {
+	let tour = new Tour(req.body);
+	tour.save().then(function() {
+		res.redirect("/api/site/admin/tours");
+	}).catch(function (err) {
+		console.log(err);
+		res.json({
 			status: err.message
 		});
 	});
