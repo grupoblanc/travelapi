@@ -7,7 +7,8 @@ let City = require('../models/city');
 
 router.get('/', function (req, res, next) {
 	Place.find({})
-	.populate('city').sort('-createdAt').then(function (results) {
+	.populate('city')
+	.sort('-createdAt').then(function (results) {
 		res.render('places_dash', {
 			title: 'Places Admin',
 			places: results
@@ -95,6 +96,7 @@ router.post('/fromgoogle', function(req,res, next) {
 				place.location.lat = googlePlace.geometry.location.lat;
 				place.location.lng = googlePlace.geometry.location.lng;
 				if (googlePlace.photos !== undefined) {
+					place.photos = googlePlace.photos;
 					let photo = googlePlace.photos[0];
 					place.photo.reference = photo.photo_reference;
 					place.photo.width = photo.width;
@@ -163,6 +165,7 @@ router.get('/textsearch', function(req, res, next) {
 									place.location.lat = googlePlace.geometry.location.lat;
 									place.location.lng = googlePlace.geometry.location.lng;
 									if (googlePlace.photos !== undefined) {
+										place.photos = googlePlace.photos;
 										let photo = googlePlace.photos[0];
 										place.photo.reference = photo.photo_reference;
 										place.photo.width = photo.width;

@@ -91,7 +91,9 @@ router.get('/tours/:id', function (req, res, next) {
 	Place.findById(req.params.id)
 	.populate('city')
 	.then(function (place) {
-		Tour.find({parent: place._id}).sort('-createdAt').then(function (tours) {
+		Tour.find({parent: place._id})
+		.sort(['totalTime','totalDistance','-createdAt'])
+		.then(function (tours) {
 			res.json({
 				place: {
 					...place._doc,
