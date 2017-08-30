@@ -33,7 +33,7 @@ let placeSchema = new Schema({
 	},
 	photos: [{
 		width: Number,
-		reference: String
+		photo_reference: String
 	}],
 	opening_hours: {
 		open_now: {
