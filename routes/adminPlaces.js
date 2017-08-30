@@ -115,11 +115,17 @@ router.post('/fromgoogle', function(req,res, next) {
 				} else {
 					place.types = googlePlace.types;
 				}
+				delete place._id;
+				delete place._doc._id;
 				place.save().then(function(place) {
 					res.redirect('/api/site/admin/places');
 				}).catch(function (err) {
-					res.json({
-						status: err.message
+					Place.update(place, {upsert: true}).then(function(place) {
+						res.redirect('/api/site/admin/places');
+					}).catch(function(err) {
+						res.json({
+							status: err.message
+						});
 					});
 				});
 			} else {
@@ -184,10 +190,11 @@ router.get('/textsearch', function(req, res, next) {
 									} else {
 										place.types = googlePlace.types;
 									}
-									place.save().then(function(place) {
-									}).catch(function (err) {
-										res.json({
-											status: err.message
+									place.save().then(function(place) {}).catch(function (err) {
+										Place.update(place, {upsert: true}).then(function(place) {}).catch(function(err) {
+											res.json({
+												status: err.message
+											});
 										});
 									});
 								} else {
