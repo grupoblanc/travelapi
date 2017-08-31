@@ -146,19 +146,60 @@ function  getObjectId(param) {
 		? "123456789012" : param);
 }
 
-router.get('/cities/:id', function(req, res, next) {
-	fnerror = function(err) {
-		console.log(err);
-		return res.json({
-			status: err.message
-		});
-	};
-	City.findOne({$or: [
-		{_id: getObjectId(req.params.id) },
-		{googleId: req.params.id} ]
-	}).then(function(city) {
-		if (city) {
-			Place.aggregate()
+function forEachCategory(cat, city, req, res) {
+	queryn = cat + " in " + city.name;
+	request("https://maps.googleapis.com/maps/api/place/textsearch/json?query=" +
+		queryn + "&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q", function(error, response, body) {
+			googleResponse = JSON.parse(body);
+			if (googleResponse.status === "OK") {
+					googleResult = googleResponse.results;
+					googleResult.forEach(function (result, i) {
+						let googleId = result.place_id;
+						request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
+							googleId +
+							'&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q', function (error, response, body) {
+								googleResponse = JSON.parse(body);
+								if (googleResponse.status === "OK") {
+									googlePlace = googleResponse.result;
+									let place =  new Place();
+									place.name = googlePlace.name;
+									place.city = city;
+									place.googleId = googlePlace.place_id;
+									place.location.lat = googlePlace.geometry.location.lat;
+									place.location.lng = googlePlace.geometry.location.lng;
+									place.rating = googlePlace.rating;
+									if (googlePlace.photos !== undefined) {
+										place.photos = googlePlace.photos;
+										let photo = googlePlace.photos[0];
+										place.photo.reference = photo.photo_reference;
+										place.photo.width = photo.width;
+									}
+									place.website = googlePlace.website;
+									place.phone_number = googlePlace.international_phone_number !== undefined ?
+										googlePlace.international_phone_number : googlePlace.formatted_phone_number;
+									place.address = googlePlace.formatted_address !== undefined ?
+										googlePlace.formatted_address : googlePlace.vicinity;
+									if (googlePlace.opening_hours !== undefined) {
+										place.opening_hours.open_now = googlePlace.opening_hours.open_now;
+										place.opening_hours.weekdays = googlePlace.opening_hours.weekday_text
+									}
+									place.types = cat;
+									place.save().then(function(place) {}).catch(function (err) {
+										Place.update(place, {upsert: true}).then(function(place) {}).catch(function(err) {
+											res.json({
+												status: err.message
+											});
+										});
+									});
+								}
+						});
+					});
+				}
+			});
+		}
+
+function ifCity(city, req, res) {
+	Place.aggregate()
 			.unwind("types")
 			.match({ city: city._id})
 			.group({
@@ -181,8 +222,10 @@ router.get('/cities/:id', function(req, res, next) {
 					result: "OK"
 				});
 			}).catch(fnerror);
-		} else {
-			if (req.params.id.length == 27) {
+}
+
+function buildFromGoogle(req, res) {
+	if (req.params.id.length == 27) {
 				// google city
 				let googleId = req.params.id;
 				request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
@@ -200,22 +243,54 @@ router.get('/cities/:id', function(req, res, next) {
 						city.photo.reference = photo.photo_reference;
 						city.photo.width = photo.width;
 						city.topics = [];
-						return res.json({
-							city: {
-								...city._doc,
-								topics: []
-							},
-							result: "OK"
+						city.save().then(function(city) {
+							let categories = ["restaurant", "beach",
+							"hotel", "cafe", "park"];
+							categories.forEach(function (cat) {
+								forEachCategory(cat, city, res);
+								if (i == categories.length - 1) {
+									res.send("hello");
+								}
+							});
+						});
+					}  else {
+						res.json({
+							status: error.message
 						});
 					}
-			});
+				});
 			} else {
-				return res.json({
-					status: "Not found"
+				res.json({
+					status: "ERROR"
 				});
 			}
+}
+
+
+function cityCallback(req, res) {
+	City.findOne({$or: [
+		{_id: getObjectId(req.params.id) },
+		{googleId: req.params.id} ]
+	}).then(function(city) {
+		if (city) {
+			ifCity(city, req, res);
+		} else {
+			buildFromGoogle(req, res);
 		}
-	}).catch(fnerror);
+	}).catch(function (err) {
+		res.json(err.message);
+	});
+}
+
+router.get('/cities/:id', function(req, res, next) {
+	fnerror = function(err) {
+		console.log(err);
+		return res.json({
+			status: err.message
+		});
+	};
+	cityCallback(req, res);
+
 });
 
 module.exports = router;

@@ -19,13 +19,13 @@ block content
 					td #{city.createdAt}
 					td #{city.googleId}
 					td
-						a(href="edit/" + city._id) Edit
+						a(href="/api/site/admin/cities/edit/" + city._id) Edit
 						br
-						a(href="remove/" + city._id)  Delete
+						a(href="/api/site/admin/cities/remove/" + city._id)  Delete
 
 	a(href='cities/create', class="btn btn-primary") Create New
 	p
-	form.form(action='cities/fromgoogle' class="form-inline" method="POST")
+	form.form(action='/api/site/admin/cities/fromgoogle' class="form-inline" method="POST")
 		div.form-group
 			input.form-control(type="text" placeholder="Google Place ID" id="google_id" name="google_id")
 		div.form-group

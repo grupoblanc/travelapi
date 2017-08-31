@@ -3,6 +3,7 @@ const request = require('request');
 let router = express.Router();
 
 let City = require('../models/city');
+let Place = require('../models/place');
 
 router.get('/', function (req, res, next) {
 	City.find({}).sort('-createdAt').then(function (results) {
@@ -109,6 +110,66 @@ router.post('/fromgoogle', function(req,res, next) {
 				city.photo.reference = photo.photo_reference;
 				city.photo.width = photo.width;
 				city.save().then(function(city) {
+					let categories = ["restaurant", "beach",
+					"hotel", "cafe", "park"];
+					categories.forEach(function (cat) {
+						queryn = cat + " in " + city.name;
+						request("https://maps.googleapis.com/maps/api/place/textsearch/json?query=" +
+		queryn +
+		"&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q", function(error, response, body) {
+			googleResponse = JSON.parse(body);
+			if (googleResponse.status === "OK") {
+					googleResult = googleResponse.results;
+					googleResult.forEach(function (result) {
+						let googleId = result.place_id;
+						request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
+							googleId +
+							'&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q', function (error, response, body) {
+								googleResponse = JSON.parse(body);
+								if (googleResponse.status === "OK") {
+									googlePlace = googleResponse.result;
+									let place =  new Place();
+									place.name = googlePlace.name;
+									place.city = city;
+									place.googleId = googlePlace.place_id;
+									place.location.lat = googlePlace.geometry.location.lat;
+									place.location.lng = googlePlace.geometry.location.lng;
+									place.rating = googlePlace.rating;
+									if (googlePlace.photos !== undefined) {
+										place.photos = googlePlace.photos;
+										let photo = googlePlace.photos[0];
+										place.photo.reference = photo.photo_reference;
+										place.photo.width = photo.width;
+									}
+									place.website = googlePlace.website;
+									place.phone_number = googlePlace.international_phone_number !== undefined ?
+										googlePlace.international_phone_number : googlePlace.formatted_phone_number;
+									place.address = googlePlace.formatted_address !== undefined ?
+										googlePlace.formatted_address : googlePlace.vicinity;
+									if (googlePlace.opening_hours !== undefined) {
+										place.opening_hours.open_now = googlePlace.opening_hours.open_now;
+										place.opening_hours.weekdays = googlePlace.opening_hours.weekday_text
+									}
+									place.types = cat;
+									place.save().then(function(place) {}).catch(function (err) {
+										Place.update(place, {upsert: true}).then(function(place) {}).catch(function(err) {
+											res.json({
+												status: err.message
+											});
+										});
+									});
+								} else {
+									res.json({
+										status: "PLACE_NOT_FOUND"
+									});
+								}
+						});
+					});
+			} else {
+				res.send(error);
+			}
+	});
+					});
 					res.redirect('/api/site/admin/cities');
 				}).catch(function (err) {
 					res.json(err.message);
