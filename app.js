@@ -15,6 +15,15 @@ mongoose.Promise = global.Promise;
 const mongoUrl = 'mongodb://localhost:27017/grupoblanc'
 
 mongoose.connect(mongoUrl, {
+	server: {
+		socketOptions: {
+			keepalive: 1
+		}
+	// sets how many times to try reconnecting
+		reconnectTries: Number.MAX_VALUE,
+	// sets the delay between every retry (milliseconds)
+		reconnectInterval: 1000
+	}
   useMongoClient: true
 } ,(err) => {
     if(err){
