@@ -127,7 +127,7 @@ router.get('/tours/all/:id', function (req, res, next) {
 });
 
 router.get('/cities', function (req, res, next) {
-	City.find({}).sort('-createdAt').then(function (cities) {
+	City.find({}).sort('views').then(function (cities) {
 		res.json({
 			cities,
 			status: "OK"
@@ -279,6 +279,11 @@ function buildFromGoogle(req, res) {
 			}
 }
 
+function updateCityViews(city) {
+	City.update({_id: city._id},
+		{ $inc: { views: 1 }}).exec();
+}
+
 
 function cityCallback(req, res) {
 	City.findOne({$or: [
@@ -287,6 +292,7 @@ function cityCallback(req, res) {
 	}).then(function(city) {
 		if (city) {
 			ifCity(city, 0, req, res);
+			updateCityViews(city);
 		} else {
 			buildFromGoogle(req, res);
 		}

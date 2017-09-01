@@ -22,6 +22,7 @@ let citySchema = new Schema({
 		type: String,
 		unique: true
 	},
+	views: Number,
 	photo: {
 		width: Number,
 		reference: String
