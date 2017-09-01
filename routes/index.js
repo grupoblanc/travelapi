@@ -259,7 +259,7 @@ function buildFromGoogle(req, res) {
 							categories.forEach(function (cat, i) {
 								forEachCategory(cat, city, res);
 								if (i == categories.length - 1) {
-									ifCity(city, 1500, req, res);
+									ifCity(city, 2500, req, res);
 								}
 							});
 						});
