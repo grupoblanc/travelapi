@@ -215,6 +215,9 @@ function ifCity(city, milis, req, res) {
 					$push: '$$CURRENT'
 				},
 			})
+			.sort({
+				"_id": -1
+			})
 			.then(function(topics) {
 				topics.forEach(function (topic) {
 					topic.places = shuffle.pick(topic.places, {
