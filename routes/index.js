@@ -128,7 +128,7 @@ router.get('/tours/all/:id', function (req, res, next) {
 
 router.get('/cities', function (req, res, next) {
 	City.find({})
-	.sort('views')
+	.sort('-views')
 	.limit(15)
 	.then(function (cities) {
 		res.json({
