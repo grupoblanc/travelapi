@@ -23,7 +23,7 @@ mongoose.connect(mongoUrl, {
 		reconnectTries: Number.MAX_VALUE,
 	// sets the delay between every retry (milliseconds)
 		reconnectInterval: 1000
-	}
+	},
   useMongoClient: true
 } ,(err) => {
     if(err){
