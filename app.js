@@ -18,7 +18,7 @@ mongoose.connect(mongoUrl, {
 	server: {
 		socketOptions: {
 			keepalive: 1
-		}
+		},
 	// sets how many times to try reconnecting
 		reconnectTries: Number.MAX_VALUE,
 	// sets the delay between every retry (milliseconds)
