@@ -337,7 +337,7 @@ router.get('/where', function (req, res) {
 						cityId = results[i].place_id;
 					}
 				}
-				res.send(cityId);
+				res.json(cityId);
 			} else {
 				res.json({
 					status: "Not found"
