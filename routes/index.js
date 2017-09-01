@@ -315,4 +315,35 @@ router.get('/cities/:id', function(req, res, next) {
 
 });
 
+router.get('/where', function (req, res) {
+	let lat = req.query.lat;
+	let lng = req.query.lng;
+	request("http://maps.googleapis.com/maps/api/geocode/json?latlng="+ lat + "," + lng + "&sensor=false",
+		function (error, response, body) {
+			googleResponse = JSON.parse(body);
+			if (error) {
+				return res.json({
+					status: error.message
+				})
+			}
+			if (googleResponse.status === "OK") {
+				console.log("ok");
+				results = googleResponse.results;
+				results = results.reverse();
+				let types = [];
+				let cityId = null;
+				for (let i = 0; i < results.length; i++) {
+					if (results[i].types[0] == "locality") {
+						cityId = results[i].place_id;
+					}
+				}
+				res.send(cityId);
+			} else {
+				res.json({
+					status: "Not found"
+				})
+			}
+	});
+});
+
 module.exports = router;
