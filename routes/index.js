@@ -146,6 +146,48 @@ function  getObjectId(param) {
 		? "123456789012" : param);
 }
 
+function forEachPlace(queryn, cat, result, i, city, req, res) {
+	let googleId = result.place_id;
+		request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
+			googleId +
+			'&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q', function (error, response, body) {
+				googleResponse = JSON.parse(body);
+				if (googleResponse.status === "OK") {
+					googlePlace = googleResponse.result;
+					let place =  new Place();
+					place.name = googlePlace.name;
+					place.city = city;
+					place.googleId = googlePlace.place_id;
+					place.location.lat = googlePlace.geometry.location.lat;
+					place.location.lng = googlePlace.geometry.location.lng;
+					place.rating = googlePlace.rating;
+					if (googlePlace.photos !== undefined) {
+						place.photos = googlePlace.photos;
+						let photo = googlePlace.photos[0];
+						place.photo.reference = photo.photo_reference;
+						place.photo.width = photo.width;
+					}
+					place.website = googlePlace.website;
+					place.phone_number = googlePlace.international_phone_number !== undefined ?
+						googlePlace.international_phone_number : googlePlace.formatted_phone_number;
+					place.address = googlePlace.formatted_address !== undefined ?
+						googlePlace.formatted_address : googlePlace.vicinity;
+					if (googlePlace.opening_hours !== undefined) {
+						place.opening_hours.open_now = googlePlace.opening_hours.open_now;
+						place.opening_hours.weekdays = googlePlace.opening_hours.weekday_text
+					}
+					place.types = cat;
+					place.save().then(function(place) {}).catch(function (err) {
+						Place.update(place, {upsert: true}).then(function(place) {}).catch(function(err) {
+							res.json({
+								status: err.message
+							});
+						});
+					});
+				}
+		});
+}
+
 function forEachCategory(cat, city, req, res) {
 	queryn = cat + " in " + city.name;
 	request("https://maps.googleapis.com/maps/api/place/textsearch/json?query=" +
@@ -154,52 +196,17 @@ function forEachCategory(cat, city, req, res) {
 			if (googleResponse.status === "OK") {
 					googleResult = googleResponse.results;
 					googleResult.forEach(function (result, i) {
-						let googleId = result.place_id;
-						request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
-							googleId +
-							'&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q', function (error, response, body) {
-								googleResponse = JSON.parse(body);
-								if (googleResponse.status === "OK") {
-									googlePlace = googleResponse.result;
-									let place =  new Place();
-									place.name = googlePlace.name;
-									place.city = city;
-									place.googleId = googlePlace.place_id;
-									place.location.lat = googlePlace.geometry.location.lat;
-									place.location.lng = googlePlace.geometry.location.lng;
-									place.rating = googlePlace.rating;
-									if (googlePlace.photos !== undefined) {
-										place.photos = googlePlace.photos;
-										let photo = googlePlace.photos[0];
-										place.photo.reference = photo.photo_reference;
-										place.photo.width = photo.width;
-									}
-									place.website = googlePlace.website;
-									place.phone_number = googlePlace.international_phone_number !== undefined ?
-										googlePlace.international_phone_number : googlePlace.formatted_phone_number;
-									place.address = googlePlace.formatted_address !== undefined ?
-										googlePlace.formatted_address : googlePlace.vicinity;
-									if (googlePlace.opening_hours !== undefined) {
-										place.opening_hours.open_now = googlePlace.opening_hours.open_now;
-										place.opening_hours.weekdays = googlePlace.opening_hours.weekday_text
-									}
-									place.types = cat;
-									place.save().then(function(place) {}).catch(function (err) {
-										Place.update(place, {upsert: true}).then(function(place) {}).catch(function(err) {
-											res.json({
-												status: err.message
-											});
-										});
-									});
-								}
-						});
+						if (i < 10) {
+							forEachPlace(queryn, cat, result, i, city, req, res);
+						}
 					});
 				}
 			});
 		}
 
-function ifCity(city, req, res) {
-	Place.aggregate()
+function ifCity(city, milis, req, res) {
+	setTimeout(function() {
+		Place.aggregate()
 			.unwind("types")
 			.match({ city: city._id})
 			.group({
@@ -215,13 +222,14 @@ function ifCity(city, req, res) {
 					});
 				});
 				res.json({
-					city: {
-						...city._doc,
-						topics: topics,
-					},
-					result: "OK"
-				});
+						city: {
+							...city._doc,
+							topics: topics,
+						},
+						result: "OK"
+					});
 			}).catch(fnerror);
+	}, milis);
 }
 
 function buildFromGoogle(req, res) {
@@ -236,6 +244,8 @@ function buildFromGoogle(req, res) {
 						googlePlace = googleResponse.result;
 						let city =  new City();
 						city.name = googlePlace.name;
+						city.parent =
+						googlePlace.address_components[googlePlace.address_components.length - 1].long_name;
 						city.googleId = googlePlace.place_id;
 						city.location.lat = googlePlace.geometry.location.lat;
 						city.location.lng = googlePlace.geometry.location.lng;
@@ -246,10 +256,10 @@ function buildFromGoogle(req, res) {
 						city.save().then(function(city) {
 							let categories = ["restaurant", "beach",
 							"hotel", "cafe", "park"];
-							categories.forEach(function (cat) {
+							categories.forEach(function (cat, i) {
 								forEachCategory(cat, city, res);
 								if (i == categories.length - 1) {
-									res.send("hello");
+									ifCity(city, 1500, req, res);
 								}
 							});
 						});
@@ -273,7 +283,7 @@ function cityCallback(req, res) {
 		{googleId: req.params.id} ]
 	}).then(function(city) {
 		if (city) {
-			ifCity(city, req, res);
+			ifCity(city, 0, req, res);
 		} else {
 			buildFromGoogle(req, res);
 		}
