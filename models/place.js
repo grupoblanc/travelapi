@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+Tour = require('./tour');
+
 let placeSchema = new Schema({
 	name: {
 		type: String,
@@ -51,6 +53,10 @@ let placeSchema = new Schema({
 		type: Date,
 		default: Date.now()
 	}
+});
+
+placeSchema.pre('remove', function(next) {
+	Tour.remove({ parent: this._id }).exec();
 });
 
 module.exports = mongoose.model('Place', placeSchema);

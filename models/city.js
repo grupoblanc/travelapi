@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+let Place = require('./place');
+
 let Schema = mongoose.Schema;
 
 let citySchema = new Schema({
@@ -29,5 +31,10 @@ let citySchema = new Schema({
 		default: Date.now()
 	}
 });
+
+citySchema.pre('remove', function(next) {
+	Place.remove({ city: this._id }).exec();
+	next();
+})
 
 module.exports = mongoose.model('City', citySchema);
