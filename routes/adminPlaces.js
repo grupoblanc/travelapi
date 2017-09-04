@@ -63,6 +63,7 @@ router.get('/edit/:id', function (req, res, next) {
 router.post('/edit', function (req, res, next) {
 	let placeData = {
 		"types": req.body.place_type.split(","),
+		"description": req.body.description,
 	};
 	Place.update({_id: req.body._id }, placeData).then(function(place) {
 		console.log(place);
