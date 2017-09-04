@@ -38,13 +38,62 @@ router.get('/places', function(req, res, next) {
 });
 
 router.get('/places/:id', function(req, res, next) {
-	Place.findById(req.params.id)
+	Place.findOne({$or: [
+		{_id: getObjectId(req.params.id) },
+		{googleId: req.params.id} ]
+	})
 	.populate('city')
 	.then(function(place) {
-		res.json({
-			place,
-			status: "OK"
-		});
+		if (place) {
+			res.json({
+				place,
+				status: "OK"
+			});
+		} else {
+			request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
+		req.params.id +
+		'&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q', function (error, response, body) {
+			googleResponse = JSON.parse(body);
+			if (googleResponse.status === "OK") {
+				googlePlace = googleResponse.result;
+				let place =  new Place();
+				place.name = googlePlace.name;
+				place.city = req.body.city;
+				place.googleId = googlePlace.place_id;
+				place.location.lat = googlePlace.geometry.location.lat;
+				place.location.lng = googlePlace.geometry.location.lng;
+				place.rating = googlePlace.rating;
+				if (googlePlace.photos !== undefined) {
+					place.photos = googlePlace.photos;
+					let photo = googlePlace.photos[0];
+					place.photo.reference = photo.photo_reference;
+					place.photo.width = photo.width;
+				}
+				place.website = googlePlace.website;
+				place.phone_number = googlePlace.international_phone_number !== undefined ?
+					googlePlace.international_phone_number : googlePlace.formatted_phone_number;
+				place.address = googlePlace.formatted_address !== undefined ?
+					googlePlace.formatted_address : googlePlace.vicinity;
+				if (googlePlace.opening_hours !== undefined) {
+					place.opening_hours.open_now = googlePlace.opening_hours.open_now;
+					place.opening_hours.weekdays = googlePlace.opening_hours.weekday_text
+				}
+				if (req.body.place_type !== undefined && req.body.place_type !== "") {
+					place.types = req.body.place_type.split(",");;
+				} else {
+					place.types = googlePlace.types;
+				}
+				res.json({
+					place,
+					status: "OK"
+				});
+			} else {
+				res.json({
+					status: "PLACE_NOT_FOUND"
+				});
+			}
+	});
+		}
 	}).catch(function (err) {
 		res.json({
 			error: err.message
