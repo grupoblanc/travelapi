@@ -248,6 +248,7 @@ router.get('/tours/single/:place_id', function (req, res, next) {
 router.get('/tours/all/:id', function (req, res, next) {
 	Tour.findById(req.params.id)
 	.populate('city')
+	.populate('places')
 	.then(function (tour) {
 		res.json({
 			tour: tour,
