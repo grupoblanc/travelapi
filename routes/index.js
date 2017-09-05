@@ -220,12 +220,17 @@ router.get('/tours/:id', function (req, res, next) {
 						tours: tours
 					},
 					status: "OK"
-				})
+				});
+			}).catch(function(err) {
+				console.log(err);
+				res.json({
+					status: err.message
+				});
 			});
 		} else {
 			res.json({
-			status: 'No tour founds'
-		});
+				status: 'No tour founds'
+			});
 		}
 	}).catch(function(err) {
 		console.log(err);
