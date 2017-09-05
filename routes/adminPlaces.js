@@ -4,6 +4,7 @@ let router = express.Router();
 
 let Place = require('../models/place');
 let City = require('../models/city');
+let Information = require('../models/information');
 
 router.get('/', function (req, res, next) {
 	Place.find({})
@@ -61,13 +62,33 @@ router.get('/edit/:id', function (req, res, next) {
 });
 
 router.post('/edit', function (req, res, next) {
+	let description = new Information({
+		place: req.body._id,
+		lang: req.body.description_lang,
+		text:  req.body.description,
+	});
 	let placeData = {
 		"types": req.body.place_type.split(","),
-		"description": req.body.description,
 	};
-	Place.update({_id: req.body._id }, placeData).then(function(place) {
+	Place.update({_id: req.body._id}, placeData).then(function(place) {
+			Information.findOne({
+				place: description.place, lang: description.lang})
+			.then(function (info) {
+				if (info) {
+					info.text = description.text;
+					info.save().then(function () {
+						res.redirect('/api/site/admin/places');
+					});
+				} else {
+					description.save().then(function () {
+						res.redirect('/api/site/admin/places');
+					});
+				}
+			}).catch(function (error) {
+				console.log(error);
+				res.redirect('/api/site/admin/places');
+			});
 		console.log(place);
-		res.redirect('/api/site/admin/places');
 	}).catch(function (err) {
 		res.json(error);
 	});

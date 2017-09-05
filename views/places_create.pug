@@ -8,11 +8,14 @@ block content
 				label.col-sm-offset-1(class="col-sm-2" for="google_id") Google Place ID
 				div.col-sm-9
 					input.form-control(type="text" placeholder="Google Place ID" id="google_id" name="google_id" value=place.googleId)
-
+			div.form-group(class="col-sm-12")
+				label.col-sm-offset-1(class="col-sm-2" for="description_lang") Place Description Language
+				div.col-sm-9
+					textarea.form-control(placeholder="Place description language" id="description_lang" name="description_lang")
 			div.form-group(class="col-sm-12")
 				label.col-sm-offset-1(class="col-sm-2" for="description") Place Description
 				div.col-sm-9
-					textarea.form-control(placeholder="Place description" id="description" name="description" value=place.description)
+					textarea.form-control(placeholder="Place description" id="description" name="description")
 			div.form-group(class="col-sm-12")
 				label.col-sm-offset-1(class="col-sm-2" for="description") Place City
 				div.col-sm-9
@@ -33,6 +36,10 @@ block content
 					div.col-sm-9
 						input.form-control(type="text" placeholder="Google Place ID" id="google_id" name="google_id")
 
+				div.form-group(class="col-sm-12")
+				label.col-sm-offset-1(class="col-sm-2" for="description_lang") Place Description Language
+				div.col-sm-9
+					textarea.form-control(placeholder="Place description language" id="description_lang" name="description_lang")
 				div.form-group(class="col-sm-12")
 					label.col-sm-offset-1(class="col-sm-2" for="description") Place Description
 					div.col-sm-9

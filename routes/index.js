@@ -7,6 +7,7 @@ let ObjectId = require('mongoose').Types.ObjectId;
 let Place = require('../models/place');
 let Tour  = require('../models/tour');
 let City = require('../models/city');
+let Information = require('../models/information');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -18,6 +19,61 @@ router.get('/', function(req, res, next) {
   })
 });
 
+
+router.get('/info/:place_id/lang/:lang', function (req, res) {
+	Information.findOne({
+		place: getObjectId(req.params.place_id),
+		lang: req.params.lang
+	}).then(function (info) {
+		if (info) {
+			res.json({
+				info,
+				status: "OK"
+			});
+		} else {
+			Information.find({}).then(function (infos) {
+				if (infos && infos.length > 0) {
+					let baseInfo = infos[0];
+					request("https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20170905T135536Z.e1250fdd1501543f.864dd90aa15b24483f7b53ab80f6b180fae6fb42&text=" +
+				baseInfo.text + "&lang=" + req.params.lang,
+				function(error, response, body) {
+					if (error) {
+						res.send(error);
+					} else {
+						let result = JSON.parse(body);
+						let text = result.text;
+						let newInfo = new Information({
+							place: getObjectId(req.params.place_id),
+							text: text,
+							lang: req.params.lang,
+						});
+						newInfo.save().then(function(saved) {
+							res.json(saved);
+						}).catch(function (err) {
+							res.json({
+								status: err.message
+							});
+						});
+					}
+				});
+				} else {
+					res.json({
+						info: []
+					});
+				}
+			}).catch(function (err) {
+				res.json({
+					status: err.message
+				});
+			})
+		}
+	}).catch(function (err) {
+		console.log(err);
+		res.json({
+			status: err.message
+		});
+	})
+});
 
 router.get('/places', function(req, res, next) {
 	Place.find({})
