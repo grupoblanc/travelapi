@@ -210,17 +210,23 @@ router.get('/tours/:id', function (req, res, next) {
 	Place.findById(req.params.id)
 	.populate('city')
 	.then(function (place) {
-		Tour.find({parent: place._id})
-		.sort(['totalTime','totalDistance','-createdAt'])
-		.then(function (tours) {
+		if (place) {
+			Tour.find({parent: place._id})
+			.sort(['totalTime','totalDistance','-createdAt'])
+			.then(function (tours) {
+				res.json({
+					place: {
+						...place._doc,
+						tours: tours
+					},
+					status: "OK"
+				})
+			});
+		} else {
 			res.json({
-				place: {
-					...place._doc,
-					tours: tours
-				},
-				status: "OK"
-			})
+			status: 'No tour founds'
 		});
+		}
 	}).catch(function(err) {
 		console.log(err);
 		res.json({
