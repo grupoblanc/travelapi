@@ -212,7 +212,7 @@ router.get('/tours/:id', function (req, res, next) {
 	.then(function (place) {
 		if (place) {
 			Tour.find({parent: place._id})
-			.sort([['totalTime','totalDistance','-createdAt']])
+			.sort([['totalTime'],['totalDistance'],['-createdAt']])
 			.then(function (tours) {
 				res.json({
 					place: {
