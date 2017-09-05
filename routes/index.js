@@ -38,7 +38,18 @@ router.get('/info/:place_id/lang/:lang', function (req, res) {
 				baseInfo.text + "&lang=" + req.params.lang,
 				function(error, response, body) {
 					if (error) {
-						res.send(error);
+						for (let i = 0; i < infos.length; i++) {
+							if (infos[i].lang == "en" || infos[i].lang == "es") {
+								return res.json({
+									info: infos[i],
+									status: "OK",
+								});
+							}
+						}
+						return res.json({
+							info: infos[0],
+							status: "OK",
+						});
 					} else {
 						let result = JSON.parse(body);
 						let text = result.text;
@@ -48,7 +59,10 @@ router.get('/info/:place_id/lang/:lang', function (req, res) {
 							lang: req.params.lang,
 						});
 						newInfo.save().then(function(saved) {
-							res.json(saved);
+							res.json({
+								info: saved,
+								status: "OK"
+							});
 						}).catch(function (err) {
 							res.json({
 								status: err.message
@@ -58,7 +72,7 @@ router.get('/info/:place_id/lang/:lang', function (req, res) {
 				});
 				} else {
 					res.json({
-						info: []
+						status: "OK"
 					});
 				}
 			}).catch(function (err) {
