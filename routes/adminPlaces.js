@@ -71,6 +71,7 @@ router.post('/edit', function (req, res, next) {
 		"types": req.body.place_type.split(","),
 	};
 	Place.update({_id: req.body._id}, placeData).then(function(place) {
+		if (description.text !== undefined && description.text.length > 0) {
 			Information.findOne({
 				place: description.place, lang: description.lang})
 			.then(function (info) {
@@ -88,6 +89,9 @@ router.post('/edit', function (req, res, next) {
 				console.log(error);
 				res.redirect('/api/site/admin/places');
 			});
+		} else {
+			res.redirect('/api/site/admin/places');
+		}
 		console.log(place);
 	}).catch(function (err) {
 		res.json(error);

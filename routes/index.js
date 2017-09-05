@@ -206,17 +206,22 @@ router.get('/tours/all', function (req, res, next) {
 });
 
 
-router.get('/tours/:id', function (req, res, next) {
-	Place.findById(req.params.id)
+router.get('/tours/single/:place_id', function (req, res, next) {
+	Place.findById(req.params.place_id)
 	.populate('city')
 	.then(function (place) {
 		if (place) {
 			Tour.find({parent: place._id})
-			.sort([['totalTime', 'ascending'],['totalDistance', 'ascending'],['createdAt', 'descending']])
+			.sort([['totalTime', 'ascending'],['totalDistance', 'ascending']])
 			.then(function (tours) {
 				res.json({
 					place: {
-						...place._doc,
+						name: place.name,
+						city: place.city,
+						googleId: place.googleId,
+						address: place.address,
+						_id: place._id,
+						photo: place.photo,
 						tours: tours
 					},
 					status: "OK"
