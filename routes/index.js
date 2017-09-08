@@ -31,7 +31,9 @@ router.get('/info/:place_id/lang/:lang', function (req, res) {
 				status: "OK"
 			});
 		} else {
-			Information.find({}).then(function (infos) {
+			Information.find({
+				place: getObjectId(req.params.place_id)
+			}).then(function (infos) {
 				if (infos && infos.length > 0) {
 					let baseInfo = infos[0];
 					request("https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20170905T135536Z.e1250fdd1501543f.864dd90aa15b24483f7b53ab80f6b180fae6fb42&text=" +
