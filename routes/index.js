@@ -21,8 +21,9 @@ router.get('/', function(req, res, next) {
 
 
 router.get('/info/:place_id/lang/:lang', function (req, res) {
+	let id = getObjectId(req.params.place_id);
 	Information.findOne({
-		place: getObjectId(req.params.place_id),
+		place: id,
 		lang: req.params.lang
 	}).then(function (info) {
 		if (info) {
@@ -32,7 +33,7 @@ router.get('/info/:place_id/lang/:lang', function (req, res) {
 			});
 		} else {
 			Information.find({
-				place: getObjectId(req.params.place_id)
+				place: id
 			}).then(function (infos) {
 				if (infos && infos.length > 0) {
 					let baseInfo = infos[0];
@@ -224,6 +225,7 @@ router.get('/tours/single/:place_id', function (req, res, next) {
 						address: place.address,
 						_id: place._id,
 						photo: place.photo,
+						photos: place.photos,
 						tours: tours
 					},
 					status: "OK"
