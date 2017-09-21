@@ -8,6 +8,8 @@ let Place = require('../models/place');
 let Tour  = require('../models/tour');
 let City = require('../models/city');
 let Information = require('../models/information');
+let Profile = require('../models/profile');
+let Review  = require('../models/review');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -19,6 +21,143 @@ router.get('/', function(req, res, next) {
   })
 });
 
+router.get('/profiles', function (req, res) {
+	Profile.find({}).then(function (profiles) {
+		return res.json({
+			profiles: profiles,
+			status: "OK"
+		});
+	}).catch(function (err) {
+		return res.json({
+			status: err.message,
+		});
+	});
+});
+
+
+router.get('/profiles/type/:token_type/tokenid/:token_id', function (req, res) {
+	Profile.findOne({type: req.params.token_type, tokenId: req.params.token_id})
+	.then(function (profile) {
+		if (profile) {
+			Review.find({profile: profile._id}).then(function (reviews) {
+				return res.json({
+					profile: {
+						...profile._doc,
+						reviews: reviews,
+					},
+					status: "OK"
+				});
+			}).catch(function(err) {
+				return res.json({
+					status: err.message,
+				});
+			});
+		} else {
+			return res.json({
+				status: "Profile not found",
+			});
+		}
+	}).catch(function (err) {
+		return res.json({
+			status: err.message,
+		});
+	});
+});
+
+router.post('/profiles/access', function (req, res) {
+	let profile = new Profile();
+	profile.name = req.body.name;
+	profile.email = req.body.email;
+	profile.type = req.body.type;
+	if (req.body.tokenId !== undefined) {
+		profile.tokenId = req.body.tokenId;
+	} else {
+		profile.tokenId = profile._id;
+	}
+	profile.photoUrl = req.body.photoUrl;
+	Profile.findOne({ type: profile.type, tokenId: profile.tokenId })
+	.then(function(user) {
+		if (user) {
+			Review.find({profile: user._id}).then(function (reviews) {
+				return res.json({
+					profile: {
+						...user._doc,
+						reviews: reviews,
+					},
+					status: "OK"
+				});
+			}).catch(function(err) {
+				return res.json({
+					status: err.message,
+				});
+			});
+		} else {
+			//register
+			let newUser = new Profile(profile);
+			newUser.save().then(function () {
+				return res.json({
+					profile: newUser,
+				})
+			}).catch(function (err) {
+				return res.json({
+					err: err.message,
+				})
+			})
+		}
+	}).catch(function (err) {
+		return res.json({
+			err: err.message,
+		});
+	});
+});
+
+router.get('/profiles/:id', function (req, res) {
+	Profile.findById(req.params.id).then(function (profile) {
+		return res.json({
+			profile: profile,
+			status: "OK"
+		});
+	}).catch(function (err) {
+		return res.json({
+			status: err.message,
+		});
+	});
+});
+
+router.get('/reviews/:place_id', function (req, res) {
+	Review.find({place: req.params.place_id})
+	.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
+	.sort('-createdAt').then(function (reviews) {
+		return res.json({
+			reviews: reviews,
+			status: "OK",
+		})
+	}).catch(function (err) {
+		return res.json({
+			err: err.message
+		});
+	});
+});
+
+
+router.post('/reviews/add', function (req, res) {
+	let review = new Review();
+	review.message = req.body.message;
+	review.profile = req.body.profile_id;
+	review.rating = req.body.rating;
+	review.place = req.body.place_id;
+	review.photo = req.body.photo_url;
+	review.save().then(function () {
+		return res.json({
+			review: review,
+			status: "OK",
+		});
+	}).catch(function (err) {
+		return res.json({
+			err: err.message,
+		})
+	});
+});
 
 router.get('/info/:place_id/lang/:lang', function (req, res) {
 	let id = getObjectId(req.params.place_id);
