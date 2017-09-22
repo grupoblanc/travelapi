@@ -22,7 +22,9 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/profiles', function (req, res) {
-	Profile.find({}).then(function (profiles) {
+	Profile.find({})
+		.sort('-createdAt')
+		.then(function (profiles) {
 		return res.json({
 			profiles: profiles,
 			status: "OK"
@@ -81,6 +83,7 @@ router.post('/profiles/access', function (req, res) {
 	.then(function(user) {
 		if (user) {
 			Review.find({profile: user._id})
+			.sort('-createdAt')
 			.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
 			.then(function (reviews) {
 				return res.json({
@@ -119,6 +122,7 @@ router.get('/profiles/:id', function (req, res) {
 	Profile.findById(req.params.id).then(function (profile) {
 		if (profile) {
 			Review.find({profile: profile._id})
+			.sort('-createdAt')
 			.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
 			.then(function (reviews) {
 				return res.json({
@@ -164,9 +168,9 @@ router.get('/reviews/:place_id', function (req, res) {
 router.post('/reviews/add', function (req, res) {
 	let review = new Review();
 	review.message = req.body.message;
-	review.profile = req.body.profile_id;
+	review.profile = req.body.profile._id;
 	review.rating = req.body.rating;
-	review.place = req.body.place_id;
+	review.place = req.body.place._id;
 	review.photo = req.body.photo_url;
 	review.save().then(function () {
 		return res.json({
