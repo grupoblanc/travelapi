@@ -39,7 +39,9 @@ router.get('/profiles/type/:token_type/tokenid/:token_id', function (req, res) {
 	Profile.findOne({type: req.params.token_type, tokenId: req.params.token_id})
 	.then(function (profile) {
 		if (profile) {
-			Review.find({profile: profile._id}).then(function (reviews) {
+			Review.find({profile: profile._id})
+			.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
+			.then(function (reviews) {
 				return res.json({
 					profile: {
 						...profile._doc,
@@ -78,7 +80,9 @@ router.post('/profiles/access', function (req, res) {
 	Profile.findOne({ type: profile.type, tokenId: profile.tokenId })
 	.then(function(user) {
 		if (user) {
-			Review.find({profile: user._id}).then(function (reviews) {
+			Review.find({profile: user._id})
+			.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
+			.then(function (reviews) {
 				return res.json({
 					profile: {
 						...user._doc,
@@ -100,23 +104,40 @@ router.post('/profiles/access', function (req, res) {
 				})
 			}).catch(function (err) {
 				return res.json({
-					err: err.message,
+					status: err.message,
 				})
 			})
 		}
 	}).catch(function (err) {
 		return res.json({
-			err: err.message,
+			status: err.message,
 		});
 	});
 });
 
 router.get('/profiles/:id', function (req, res) {
 	Profile.findById(req.params.id).then(function (profile) {
-		return res.json({
-			profile: profile,
-			status: "OK"
-		});
+		if (profile) {
+			Review.find({profile: profile._id})
+			.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
+			.then(function (reviews) {
+				return res.json({
+					profile: {
+						...profile._doc,
+						reviews: reviews,
+					},
+					status: "OK"
+				});
+			}).catch(function(err) {
+				return res.json({
+					status: err.message,
+				});
+			});
+		} else {
+			return res.json({
+				status: "NOT FOUND"
+			});
+		}
 	}).catch(function (err) {
 		return res.json({
 			status: err.message,
@@ -134,7 +155,7 @@ router.get('/reviews/:place_id', function (req, res) {
 		})
 	}).catch(function (err) {
 		return res.json({
-			err: err.message
+			status: err.message
 		});
 	});
 });
@@ -154,7 +175,7 @@ router.post('/reviews/add', function (req, res) {
 		});
 	}).catch(function (err) {
 		return res.json({
-			err: err.message,
+			status: err.message,
 		})
 	});
 });
@@ -269,7 +290,7 @@ router.get('/places/:id', function(req, res, next) {
 				});
 			}).catch(function(err) {
 				return res.json({
-					err: err.message
+					status: err.message
 				})
 			})
 		} else {
