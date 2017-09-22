@@ -261,7 +261,7 @@ router.get('/places/:id', function(req, res, next) {
 			.then(function (reviews) {
 				return res.json({
 					place: {
-						...place.doc,
+						...place._doc,
 						reviews: reviews,
 					},
 					status: "OK"
