@@ -258,6 +258,7 @@ router.get('/places/:id', function(req, res, next) {
 	.then(function(place) {
 		if (place) {
 			Review.find({place: place})
+			.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
 			.then(function (reviews) {
 				return res.json({
 					place: {
