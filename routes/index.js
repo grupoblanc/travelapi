@@ -257,10 +257,20 @@ router.get('/places/:id', function(req, res, next) {
 	.populate('city')
 	.then(function(place) {
 		if (place) {
-			res.json({
-				place,
-				status: "OK"
-			});
+			Review.find({place: place})
+			.then(function (reviews) {
+				return res.json({
+					place: {
+						...place.doc,
+						reviews: reviews,
+					},
+					status: "OK"
+				});
+			}).catch(function(err) {
+				return res.json({
+					err: err.message
+				})
+			})
 		} else {
 			request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
 		req.params.id +
