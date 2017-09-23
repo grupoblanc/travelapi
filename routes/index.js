@@ -173,14 +173,40 @@ router.post('/reviews/add', function (req, res) {
 	review.place = req.body.place._id;
 	review.photo = req.body.photo_url;
 	review.save().then(function () {
-		return res.json({
-			review: review,
-			status: "OK",
+		Place.findById(review.place)
+		.then(function (place) {
+			if (place) {
+				// find mean and edit place
+				Review.aggregate(
+					{$match: {place: review.place}},
+					{$group: {_id: place._id, average: {$avg: "$rating"}}}
+					).then(function (result, err) {
+						place.rating = result[0].average;
+						place.save(function() {
+							return res.json({
+								review: review,
+								status: "OK",
+							});
+						});
+					}).catch(function (err) {
+						return res.json({
+							status: err.message,
+						});
+					});
+			} else {
+				return res.json({
+					status: "Place not found",
+				});
+			}
+		}).catch(function (err) {
+			return res.json({
+				status: err.message,
+			});
 		});
 	}).catch(function (err) {
 		return res.json({
 			status: err.message,
-		})
+		});
 	});
 });
 
