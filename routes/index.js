@@ -22,8 +22,7 @@ let storage = multer.diskStorage({
 			if (err) {
 				return cb(err);
 			}
-			cb(null, raw.toString('hex') +
-			path.extname + " " + file.originalname)
+			cb(null, raw.toString('hex') + file.originalname)
 		});
 	}
 });
