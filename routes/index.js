@@ -16,7 +16,7 @@ let Profile = require('../models/profile');
 let Review  = require('../models/review');
 
 let storage = multer.diskStorage({
-	destination: './uploads',
+	destination: './public/uploads',
 	filename: function(req, file, cb) {
 		crypto.pseudoRandomBytes(16, function(err, raw) {
 			if (err) {
@@ -190,7 +190,7 @@ router.post('/photo/upload', multer({storage: storage})
 						status: 'Only images are allowed.'
 					});
 		}
-		fs.writeFile('./uploads/' + filename, req.file.buffer, 'binary', function(err) {
+		fs.writeFile('./public/uploads/' + filename, req.file.buffer, 'binary', function(err) {
                 if (err) {
                 	return res.json({
                 		status: err.message
