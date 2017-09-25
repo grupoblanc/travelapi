@@ -184,7 +184,7 @@ router.get('/reviews/:place_id', function (req, res) {
 router.post('/photo/upload', multer({storage: storage})
 	.single('photo'), function (req, res) {
 		let filename = req.file.filename;
-		let ext = path.extname(file.originalname);
+		let ext = path.extname(req.file.originalname);
 		if (ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg') {
 				return res.json({
 						status: 'Only images are allowed.'
