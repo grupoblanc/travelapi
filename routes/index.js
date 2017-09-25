@@ -1,6 +1,7 @@
 const multer = require('multer');
 const crypto = require('crypto');
 const path = require('path');
+const fs = require('fs');
 let express = require('express');
 let router = express.Router();
 let request = require("request");
@@ -181,17 +182,35 @@ router.get('/reviews/:place_id', function (req, res) {
 	});
 });
 
-
-router.post('/reviews/add', multer({storage: storage})
+router.post('/photo/upload', multer({storage: storage})
 	.single('photo'), function (req, res) {
+		let filename = req.file.filename;
+		let ext = path.extname(file.originalname);
+		if (ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg') {
+				return res.json({
+						status: 'Only images are allowed.'
+					});
+		}
+		fs.writeFile('./uploads/' + filename, buffer, 'binary', function(err) {
+                if (err) {
+                	return res.json({
+                		status: err.message
+                	});
+                }
+            return res.json({
+				photo: filename,
+				status: "OK"
+			});
+        });
+});
+
+router.post('/reviews/add', function (req, res) {
 	let review = new Review();
 	review.message = req.body.message;
 	review.profile = req.body.profile._id;
 	review.rating = req.body.rating;
 	review.place = req.body.place._id;
-	if (req.file !== undefined) {
-		review.photo = req.file.filename;
-	}
+	review.photo = req.body.photo;
 	review.save().then(function () {
 		Place.findById(review.place)
 		.then(function (place) {
