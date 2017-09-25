@@ -1,3 +1,6 @@
+const multer = require('multer');
+const crypto = require('crypto');
+const path = require('path');
 let express = require('express');
 let router = express.Router();
 let request = require("request");
@@ -10,6 +13,20 @@ let City = require('../models/city');
 let Information = require('../models/information');
 let Profile = require('../models/profile');
 let Review  = require('../models/review');
+
+let storage = multer.diskStorage({
+	destination: './uploads',
+	filename: function(req, file, cb) {
+		crypto.pseudoRandomBytes(16, function(err, raw) {
+			if (err) {
+				return cb(err);
+			}
+			cb(null, raw.toString('hex') +
+			path.extname + " " + file.originalname)
+		});
+	}
+});
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -165,13 +182,16 @@ router.get('/reviews/:place_id', function (req, res) {
 });
 
 
-router.post('/reviews/add', function (req, res) {
+router.post('/reviews/add', multer({storage: storage})
+	.single('photo'), function (req, res) {
 	let review = new Review();
 	review.message = req.body.message;
 	review.profile = req.body.profile._id;
 	review.rating = req.body.rating;
 	review.place = req.body.place._id;
-	review.photo = req.body.photo_url;
+	if (req.file !== undefined) {
+		review.photo = req.file.filename;
+	}
 	review.save().then(function () {
 		Place.findById(review.place)
 		.then(function (place) {
