@@ -47,6 +47,7 @@ router.get('/profiles', function (req, res) {
 			status: "OK"
 		});
 	}).catch(function (err) {
+		res.status(404);
 		return res.json({
 			status: err.message,
 		});
@@ -69,16 +70,19 @@ router.get('/profiles/type/:token_type/tokenid/:token_id', function (req, res) {
 					status: "OK"
 				});
 			}).catch(function(err) {
+				res.status(404);
 				return res.json({
 					status: err.message,
 				});
 			});
 		} else {
+			res.status(404);
 			return res.json({
 				status: "Profile not found",
 			});
 		}
 	}).catch(function (err) {
+		res.status(404);
 		return res.json({
 			status: err.message,
 		});
@@ -97,15 +101,15 @@ router.post('/profiles/changephoto', function(req, res) {
 			if (profile) {
 				profile.photoUrl = photoUrl;
 				profile.save(function() {
-					res.send("OK");
+					res.send("Profile updated!");
 				})
 			} else {
-				res.json("Profile not found.");
+				res.status(404);
+				res.send("Profile not found.");
 			}
 		}).catch(function (err) {
-			res.json({
-				status: err.message
-			});
+			res.status(404);
+			res.send(err.message);
 		})
 });
 
@@ -135,6 +139,7 @@ router.post('/profiles/access', function (req, res) {
 					status: "OK"
 				});
 			}).catch(function(err) {
+				res.status(404);
 				return res.json({
 					status: err.message,
 				});
@@ -147,12 +152,14 @@ router.post('/profiles/access', function (req, res) {
 					profile: newUser,
 				})
 			}).catch(function (err) {
+				res.status(404);
 				return res.json({
 					status: err.message,
 				})
 			})
 		}
 	}).catch(function (err) {
+		res.status(404);
 		return res.json({
 			status: err.message,
 		});
@@ -174,16 +181,19 @@ router.get('/profiles/:id', function (req, res) {
 					status: "OK"
 				});
 			}).catch(function(err) {
+				res.status(404);
 				return res.json({
 					status: err.message,
 				});
 			});
 		} else {
+			res.status(404);
 			return res.json({
 				status: "NOT FOUND"
 			});
 		}
 	}).catch(function (err) {
+		res.status(404);
 		return res.json({
 			status: err.message,
 		});
@@ -199,6 +209,7 @@ router.get('/reviews/:place_id', function (req, res) {
 			status: "OK",
 		})
 	}).catch(function (err) {
+		res.status(404);
 		return res.json({
 			status: err.message
 		});
@@ -238,21 +249,25 @@ router.post('/reviews/add', function (req, res) {
 							});
 						});
 					}).catch(function (err) {
+						res.status(404);
 						return res.json({
 							status: err.message,
 						});
 					});
 			} else {
+				res.status(404);
 				return res.json({
 					status: "Place not found",
 				});
 			}
 		}).catch(function (err) {
+			res.status(404);
 			return res.json({
 				status: err.message,
 			});
 		});
 	}).catch(function (err) {
+		res.status(404);
 		return res.json({
 			status: err.message,
 		});
@@ -306,6 +321,7 @@ router.get('/info/:place_id/lang/:lang', function (req, res) {
 								status: "OK"
 							});
 						}).catch(function (err) {
+							res.status(404);
 							res.json({
 								status: err.message
 							});
@@ -318,6 +334,7 @@ router.get('/info/:place_id/lang/:lang', function (req, res) {
 					});
 				}
 			}).catch(function (err) {
+				res.status(404);
 				res.json({
 					status: err.message
 				});
@@ -325,6 +342,7 @@ router.get('/info/:place_id/lang/:lang', function (req, res) {
 		}
 	}).catch(function (err) {
 		console.log(err);
+		res.status(404);
 		res.json({
 			status: err.message
 		});
@@ -342,6 +360,7 @@ router.get('/places', function(req, res, next) {
 		});
 	}).catch(function (err) {
 		console.log(err);
+		res.status(404);
 		res.json({
 			places: [],
 			status: err.message
@@ -368,6 +387,7 @@ router.get('/places/:id', function(req, res, next) {
 					status: "OK"
 				});
 			}).catch(function(err) {
+				res.status(404);
 				return res.json({
 					status: err.message
 				})
@@ -411,6 +431,7 @@ router.get('/places/:id', function(req, res, next) {
 					status: "OK"
 				});
 			} else {
+				res.status(404);
 				res.json({
 					status: "PLACE_NOT_FOUND"
 				});
@@ -418,6 +439,7 @@ router.get('/places/:id', function(req, res, next) {
 	});
 		}
 	}).catch(function (err) {
+		res.status(404);
 		res.json({
 			error: err.message
 		});
@@ -434,6 +456,7 @@ router.get('/tours', function (req, res, next) {
 		});
 	}).catch(function(err) {
 		console.log(err);
+		res.status(404);
 		res.json({
 			tours: [],
 			status: err.message
@@ -451,6 +474,7 @@ router.get('/tours/all', function (req, res, next) {
 		});
 	}).catch(function(err) {
 		console.log(err);
+		res.status(404);
 		res.json({
 			tours: [],
 			status: err.message
@@ -481,18 +505,21 @@ router.get('/tours/single/:place_id', function (req, res, next) {
 					status: "OK"
 				});
 			}).catch(function(err) {
+				res.status(404);
 				console.log(err);
 				res.json({
 					status: err.message
 				});
 			});
 		} else {
+			res.status(404);
 			res.json({
 				status: 'No tour founds'
 			});
 		}
 	}).catch(function(err) {
 		console.log(err);
+		res.status(404);
 		res.json({
 			status: err.message
 		});
@@ -509,6 +536,7 @@ router.get('/tours/all/:id', function (req, res, next) {
 		});
 	}).catch(function(err) {
 		console.log(err);
+		res.status(404);
 		res.json({
 			status: err.message
 		});
@@ -526,6 +554,7 @@ router.get('/cities', function (req, res, next) {
 		});
 	}).catch(function(err) {
 		console.log(err);
+		res.status(404);
 		res.json({
 			cities: [],
 			status: err.message
@@ -571,6 +600,7 @@ function forEachPlace(queryn, cat, result, i, city, req, res) {
 					place.types = cat;
 					place.save().then(function(place) {}).catch(function (err) {
 						Place.update(place, {upsert: true}).then(function(place) {}).catch(function(err) {
+							res.status(404);
 							res.json({
 								status: err.message
 							});
@@ -659,6 +689,7 @@ function buildFromGoogle(req, res) {
 							});
 						});
 					}  else {
+						res.status(404);
 						res.json({
 							status: error.message
 						});
@@ -696,6 +727,7 @@ function cityCallback(req, res) {
 router.get('/cities/:id', function(req, res, next) {
 	fnerror = function(err) {
 		console.log(err);
+		res.status(404);
 		return res.json({
 			status: err.message
 		});
@@ -711,6 +743,7 @@ router.get('/where', function (req, res) {
 		function (error, response, body) {
 			googleResponse = JSON.parse(body);
 			if (error) {
+				res.status(404);
 				return res.json({
 					status: error.message
 				})
@@ -728,6 +761,7 @@ router.get('/where', function (req, res) {
 				}
 				res.json(cityId);
 			} else {
+				res.status(404);
 				res.json({
 					status: "Not found"
 				})
