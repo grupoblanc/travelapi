@@ -85,6 +85,30 @@ router.get('/profiles/type/:token_type/tokenid/:token_id', function (req, res) {
 	});
 });
 
+
+router.post('/profiles/changephoto', function(req, res) {
+	let profileId = req.body._id;
+	let tokenId = req.body.tokenId;
+	let photo = req.body.photoUrl;
+	Profile.findOne({_id: getObjectId(profileId),
+		tokenId: tokenId})
+	.populate('reviews')
+	.then(function(profile) {
+			if (profile) {
+				profile.photoUrl = photoUrl;
+				profile.save(function() {
+					res.send("OK");
+				})
+			} else {
+				res.json("Profile not found.");
+			}
+		}).catch(function (err) {
+			res.json({
+				status: err.message
+			});
+		})
+});
+
 router.post('/profiles/access', function (req, res) {
 	let profile = new Profile();
 	profile.name = req.body.name;
