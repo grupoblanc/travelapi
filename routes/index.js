@@ -99,7 +99,7 @@ router.post('/profiles/changephoto', function(req, res) {
 	.populate('reviews')
 	.then(function(profile) {
 			if (profile) {
-				profile.photoUrl = photoUrl;
+				profile.photoUrl = photo;
 				profile.save(function() {
 					res.send("Profile updated!");
 				})
