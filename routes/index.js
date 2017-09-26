@@ -368,7 +368,29 @@ router.get('/places', function(req, res, next) {
 	});
 });
 
+function sendGivenAPlace(res, place, hasReviewed) {
+	Review.find({place: place})
+	.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
+	.then(function (reviews) {
+		return res.json({
+			place: {
+				...place._doc,
+				reviews: reviews,
+				userHasReviewed: hasReviewed,
+			},
+			status: "OK"
+		});
+	}).catch(function(err) {
+		res.status(404);
+		return res.json({
+			status: err.message
+		})
+	});
+}
+
+
 router.get('/places/:id', function(req, res, next) {
+	let userId = req.query.profile_id;
 	Place.findOne({$or: [
 		{_id: getObjectId(req.params.id) },
 		{googleId: req.params.id} ]
@@ -376,22 +398,22 @@ router.get('/places/:id', function(req, res, next) {
 	.populate('city')
 	.then(function(place) {
 		if (place) {
-			Review.find({place: place})
-			.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
-			.then(function (reviews) {
-				return res.json({
-					place: {
-						...place._doc,
-						reviews: reviews,
-					},
-					status: "OK"
-				});
-			}).catch(function(err) {
-				res.status(404);
-				return res.json({
-					status: err.message
-				})
-			})
+			// check if theres a review of this place
+			// given a user.
+			if (userId !== undefined) {
+					Review.find({
+						profile: getObjectId(userId),
+						place: place._id
+					}).then(function(review) {
+						if (review) {
+							sendGivenAPlace(res, place, true);
+						} else {
+							sendGivenAPlace(res, place, false);
+						}
+					})
+			} else {
+				sendGivenAPlace(res, place, false);
+			}
 		} else {
 			request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
 		req.params.id +
