@@ -401,7 +401,7 @@ router.get('/places/:id', function(req, res, next) {
 			// check if theres a review of this place
 			// given a user.
 			if (userId !== undefined) {
-					Review.find({
+					Review.findOne({
 						profile: getObjectId(userId),
 						place: place._id
 					}).then(function(review) {
@@ -410,7 +410,10 @@ router.get('/places/:id', function(req, res, next) {
 						} else {
 							sendGivenAPlace(res, place, false);
 						}
-					})
+					}).catch(function(err) {
+						console.log(err);
+						sendGivenAPlace(res, place, false);
+					});
 			} else {
 				sendGivenAPlace(res, place, false);
 			}
