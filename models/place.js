@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 let Tour = require('./tour');
-let Review = requie('./review');
+let Review = require('./review');
 let information = require('./information');
 
 let placeSchema = new Schema({
