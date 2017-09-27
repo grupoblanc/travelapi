@@ -28,6 +28,17 @@ let storage = multer.diskStorage({
 });
 
 
+function authenticationMiddleware(req, res, next) {
+	if (req.session.user !== undefined && req.session.user._id !== undefined) {
+		return next();
+	} else {
+		return res.json({
+			status: 'You must be logged in to perform this action.',
+		});
+	}
+}
+
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.json({
@@ -90,7 +101,7 @@ router.get('/profiles/type/:token_type/tokenid/:token_id', function (req, res) {
 });
 
 
-router.post('/profiles/changephoto', function(req, res) {
+router.post('/profiles/changephoto', authenticationMiddleware, function(req, res) {
 	let profileId = req.body._id;
 	let tokenId = req.body.tokenId;
 	let photo = req.body.photoUrl;
@@ -131,6 +142,7 @@ router.post('/profiles/access', function (req, res) {
 			.sort('-createdAt')
 			.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
 			.then(function (reviews) {
+				req.session.user = profile;
 				return res.json({
 					profile: {
 						...user._doc,
@@ -148,6 +160,7 @@ router.post('/profiles/access', function (req, res) {
 			//register
 			let newUser = new Profile(profile);
 			newUser.save().then(function () {
+				req.session.user = newUser;
 				return res.json({
 					profile: newUser,
 				})
@@ -164,6 +177,13 @@ router.post('/profiles/access', function (req, res) {
 			status: err.message,
 		});
 	});
+});
+
+router.get('/logout', authenticationMiddleware, function(req, res) {
+	req.session.user = undefined;
+	res.send(res.json({
+		status: "OK"
+	}));
 });
 
 router.get('/profiles/:id', function (req, res) {
@@ -216,7 +236,7 @@ router.get('/reviews/:place_id', function (req, res) {
 	});
 });
 
-router.post('/photo/upload', multer({storage: storage})
+router.post('/photo/upload', authenticationMiddleware, multer({storage: storage})
 	.single('photo'), function (req, res) {
 	let filename = req.file.filename;
     return res.json({
@@ -225,7 +245,7 @@ router.post('/photo/upload', multer({storage: storage})
 	});
 });
 
-router.post('/reviews/add', function (req, res) {
+router.post('/reviews/add', authenticationMiddleware, function (req, res) {
 	let review = new Review();
 	review.message = req.body.message;
 	review.profile = req.body.profile._id;
@@ -390,7 +410,10 @@ function sendGivenAPlace(res, place, hasReviewed) {
 
 
 router.get('/places/:id', function(req, res, next) {
-	let userId = req.query.profile_id;
+	let userId = undefined;
+	if (req.session.user !== undefined) {
+		userId = req.session.user._id;
+	}
 	Place.findOne({$or: [
 		{_id: getObjectId(req.params.id) },
 		{googleId: req.params.id} ]
