@@ -57,7 +57,7 @@ let placeSchema = new Schema({
 placeSchema.pre('remove', function(next) {
 	Tour.remove({ parent: this._id }).exec();
 	Review.remove({place: this._id}).exec();
-	Information.remove({place{: this._id}).exec();
+	Information.remove({place: this._id}).exec();
 	next();
 });
 
