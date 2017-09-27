@@ -29,7 +29,8 @@ let storage = multer.diskStorage({
 
 
 function authenticationMiddleware(req, res, next) {
-	if (req.session.user !== undefined && req.session.user._id !== undefined) {
+	if (req.session.user !== undefined) {
+		console.log(req.session.user);
 		return next();
 	} else {
 		return res.json({
