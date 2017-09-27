@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-Tour = require('./tour');
+let Tour = require('./tour');
+let Review = requie('./review');
+let information = require('./information');
 
 let placeSchema = new Schema({
 	name: {
@@ -54,6 +56,9 @@ let placeSchema = new Schema({
 
 placeSchema.pre('remove', function(next) {
 	Tour.remove({ parent: this._id }).exec();
+	Review.remove({place: this._id}).exec();
+	Information.remove({place{: this._id}).exec();
+	next();
 });
 
 module.exports = mongoose.model('Place', placeSchema);
