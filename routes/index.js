@@ -2,12 +2,13 @@ const multer = require('multer');
 const crypto = require('crypto');
 const path = require('path');
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
+const secretCode = 'theGoddamnBatman0123456789';
 let express = require('express');
 let router = express.Router();
 let request = require("request");
 let shuffle = require('shuffle-array');
 let ObjectId = require('mongoose').Types.ObjectId;
-
 let Place = require('../models/place');
 let Tour  = require('../models/tour');
 let City = require('../models/city');
@@ -29,15 +30,33 @@ let storage = multer.diskStorage({
 
 
 function authenticationMiddleware(req, res, next) {
-	if (req.session.user !== undefined) {
-		console.log(req.session.user);
-		return next();
+	var token = req.headers['x-access-token'] || req.body.token || req.query.token;
+	if (token) {
+		jwt.verify(token, secretCode, function (err, user) {
+			if (err) {
+				return res.json({
+					status: 'Failed to aunthenticate token.',
+				});
+			} else {
+				req.user = user;
+				console.log(req.user);
+				if (req.user._id !== undefined) {
+					next();
+				} else {
+					return res.json({
+						status: 'Failed to login user from token.',
+					});
+				}
+			}
+		});
 	} else {
+		res.status(404);
 		return res.json({
 			status: 'You must be logged in to perform this action.',
 		});
 	}
 }
+
 
 
 /* GET home page. */
@@ -103,7 +122,7 @@ router.get('/profiles/type/:token_type/tokenid/:token_id', function (req, res) {
 
 
 router.post('/profiles/changephoto', authenticationMiddleware, function(req, res) {
-	let profileId = req.body._id;
+	let profileId = req.user._id;
 	let tokenId = req.body.tokenId;
 	let photo = req.body.photoUrl;
 	Profile.findOne({_id: getObjectId(profileId),
@@ -143,16 +162,20 @@ router.post('/profiles/access', function (req, res) {
 			.sort('-createdAt')
 			.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
 			.then(function (reviews) {
-				req.session.user = profile;
+				let token = jwt.sign(user._doc, secretCode, {
+					expiresIn: "30 days",
+				});
 				return res.json({
 					profile: {
 						...user._doc,
 						reviews: reviews,
 					},
-					status: "OK"
+					status: "OK",
+					token: token,
 				});
 			}).catch(function(err) {
 				res.status(404);
+				console.log(err);
 				return res.json({
 					status: err.message,
 				});
@@ -161,10 +184,14 @@ router.post('/profiles/access', function (req, res) {
 			//register
 			let newUser = new Profile(profile);
 			newUser.save().then(function () {
-				req.session.user = newUser;
+				let token = jwt.sign(newUser, secretCode, {
+					expiresIn: "30 days",
+				});
 				return res.json({
 					profile: newUser,
-				})
+					status: "OK",
+					token: token,
+				});
 			}).catch(function (err) {
 				res.status(404);
 				return res.json({
@@ -181,7 +208,7 @@ router.post('/profiles/access', function (req, res) {
 });
 
 router.get('/logout', authenticationMiddleware, function(req, res) {
-	req.session.user = undefined;
+	req.user = undefined;
 	res.send(res.json({
 		status: "OK"
 	}));
@@ -249,7 +276,7 @@ router.post('/photo/upload', authenticationMiddleware, multer({storage: storage}
 router.post('/reviews/add', authenticationMiddleware, function (req, res) {
 	let review = new Review();
 	review.message = req.body.message;
-	review.profile = req.body.profile._id;
+	review.profile = req.user._id;
 	review.rating = req.body.rating;
 	review.place = req.body.place._id;
 	review.photo = req.body.photo;
@@ -412,8 +439,13 @@ function sendGivenAPlace(res, place, hasReviewed) {
 
 router.get('/places/:id', function(req, res, next) {
 	let userId = undefined;
-	if (req.session.user !== undefined) {
-		userId = req.session.user._id;
+	var token = req.headers['x-access-token'] || req.body.token || req.query.token;
+	if (token) {
+		let user = jwt.verify(token, secretCode);
+		if (user !== undefined && user._id !== undefined) {
+			userId = user._id;
+			console.log(userId);
+		}
 	}
 	Place.findOne({$or: [
 		{_id: getObjectId(req.params.id) },

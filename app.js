@@ -15,15 +15,11 @@ mongoose.Promise = global.Promise;
 const mongoUrl = 'mongodb://localhost:27017/grupoblanc'
 
 mongoose.connect(mongoUrl, {
-	server: {
-		socketOptions: {
-			keepalive: 1
-		},
-	// sets how many times to try reconnecting
-		reconnectTries: Number.MAX_VALUE,
-	// sets the delay between every retry (milliseconds)
-		reconnectInterval: 1000
-	},
+    keepAlive: 1,
+  // sets how many times to try reconnecting
+    reconnectTries: Number.MAX_VALUE,
+  // sets the delay between every retry (milliseconds)
+		reconnectInterval: 1000,
   useMongoClient: true
 } ,(err) => {
     if(err){
@@ -42,16 +38,6 @@ let app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-app.use(session({
-  secret: 'lgk993509jt546j8y8509iu569iuy',
-  resave: false,
-  saveUninitialized: true,
-  store: new mongoStore({
-    url: mongoUrl,
-    autoReconnect: true
-  })
-}));
-
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(pretty({query: 'json'}));
@@ -60,6 +46,38 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(function (req, res, next) {
+    // // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    // Pass to next layer of middleware
+    next();
+});
+
+app.use(session({
+  key: 'session.sid',
+  secret: 'lgk993509jt546j8y8509iu569iuy',
+  resave: true,
+  cookie: {
+    path: '/api/v1/',
+    secure: false,
+    maxAge: 604800000,
+    httpOnly: false,
+  },
+  saveUninitialized: true,
+  store: new mongoStore({
+    url: mongoUrl,
+    autoReconnect: true
+  })
+}));
 
 app.get('/', function (req, res) {
   res.redirect('/api/v1');
