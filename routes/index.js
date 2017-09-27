@@ -39,7 +39,6 @@ function authenticationMiddleware(req, res, next) {
 				});
 			} else {
 				req.user = user;
-				console.log(req.user);
 				if (req.user._id !== undefined) {
 					next();
 				} else {
@@ -175,7 +174,6 @@ router.post('/profiles/access', function (req, res) {
 				});
 			}).catch(function(err) {
 				res.status(404);
-				console.log(err);
 				return res.json({
 					status: err.message,
 				});
@@ -389,7 +387,6 @@ router.get('/info/:place_id/lang/:lang', function (req, res) {
 			})
 		}
 	}).catch(function (err) {
-		console.log(err);
 		res.status(404);
 		res.json({
 			status: err.message
@@ -407,7 +404,6 @@ router.get('/places', function(req, res, next) {
 			status: "OK"
 		});
 	}).catch(function (err) {
-		console.log(err);
 		res.status(404);
 		res.json({
 			places: [],
@@ -444,7 +440,6 @@ router.get('/places/:id', function(req, res, next) {
 		let user = jwt.verify(token, secretCode);
 		if (user !== undefined && user._id !== undefined) {
 			userId = user._id;
-			console.log(userId);
 		}
 	}
 	Place.findOne({$or: [
@@ -467,7 +462,6 @@ router.get('/places/:id', function(req, res, next) {
 							sendGivenAPlace(res, place, false);
 						}
 					}).catch(function(err) {
-						console.log(err);
 						sendGivenAPlace(res, place, false);
 					});
 			} else {
@@ -536,7 +530,6 @@ router.get('/tours', function (req, res, next) {
 			status: "OK"
 		});
 	}).catch(function(err) {
-		console.log(err);
 		res.status(404);
 		res.json({
 			tours: [],
@@ -554,7 +547,6 @@ router.get('/tours/all', function (req, res, next) {
 			status: "OK"
 		});
 	}).catch(function(err) {
-		console.log(err);
 		res.status(404);
 		res.json({
 			tours: [],
@@ -587,7 +579,6 @@ router.get('/tours/single/:place_id', function (req, res, next) {
 				});
 			}).catch(function(err) {
 				res.status(404);
-				console.log(err);
 				res.json({
 					status: err.message
 				});
@@ -599,7 +590,6 @@ router.get('/tours/single/:place_id', function (req, res, next) {
 			});
 		}
 	}).catch(function(err) {
-		console.log(err);
 		res.status(404);
 		res.json({
 			status: err.message
@@ -616,7 +606,6 @@ router.get('/tours/all/:id', function (req, res, next) {
 			status: "OK"
 		});
 	}).catch(function(err) {
-		console.log(err);
 		res.status(404);
 		res.json({
 			status: err.message
@@ -634,7 +623,6 @@ router.get('/cities', function (req, res, next) {
 			status: "OK"
 		});
 	}).catch(function(err) {
-		console.log(err);
 		res.status(404);
 		res.json({
 			cities: [],
@@ -807,7 +795,6 @@ function cityCallback(req, res) {
 
 router.get('/cities/:id', function(req, res, next) {
 	fnerror = function(err) {
-		console.log(err);
 		res.status(404);
 		return res.json({
 			status: err.message
@@ -830,7 +817,6 @@ router.get('/where', function (req, res) {
 				})
 			}
 			if (googleResponse.status === "OK") {
-				console.log("ok");
 				results = googleResponse.results;
 				results = results.reverse();
 				let types = [];
