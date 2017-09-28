@@ -85,6 +85,25 @@ router.get('/profiles', function (req, res) {
 });
 
 
+router.get('/profiles/me', authenticationMiddleware, function(req, res) {
+	Review.find({profile: req.user._id})
+	.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
+	.then(function (reviews) {
+		return res.json({
+			profile: {
+				...req.user,
+				reviews: reviews,
+			},
+			status: "OK"
+		});
+	}).catch(function(err) {
+		res.status(404);
+		return res.json({
+			status: err.message,
+		});
+	});
+});
+
 router.get('/profiles/type/:token_type/tokenid/:token_id', function (req, res) {
 	Profile.findOne({type: req.params.token_type, tokenId: req.params.token_id})
 	.then(function (profile) {
