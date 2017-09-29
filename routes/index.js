@@ -223,8 +223,9 @@ router.post('/profiles/changephoto', authenticationMiddleware, function(req, res
 	.populate('reviews')
 	.then(function(profile) {
 			if (profile) {
-				profile.photoUrl = photo;
-				profile.save(function() {
+				Profile.update({_id: profileId}, {
+					photoUrl: photo
+				}).then(function() {
 					res.json("Profile updated!");
 				})
 			} else {
