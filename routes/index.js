@@ -86,16 +86,31 @@ router.get('/profiles', function (req, res) {
 
 
 router.get('/profiles/me', authenticationMiddleware, function(req, res) {
-	Review.find({profile: req.user._id})
-	.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
-	.then(function (reviews) {
-		return res.json({
-			profile: {
-				...req.user,
-				reviews: reviews,
-			},
-			status: "OK"
-		});
+	Profile.findById(req.user._id)
+	.then(function (profile) {
+		if (profile) {
+			Review.find({profile: req.user._id})
+			.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
+			.then(function (reviews) {
+				return res.json({
+					profile: {
+						...profile._doc,
+						reviews: reviews,
+					},
+					status: "OK"
+				});
+			}).catch(function(err) {
+				res.status(404);
+				return res.json({
+					status: err.message,
+				});
+			});
+		} else {
+			res.status(404);
+			return res.json({
+				status: 'Profile not found',
+			});
+		}
 	}).catch(function(err) {
 		res.status(404);
 		return res.json({
