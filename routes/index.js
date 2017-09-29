@@ -149,7 +149,12 @@ router.post('/profiles/me/favorites/add', authenticationMiddleware, function (re
 			});
 		} else {
 			Profile.update({_id: profileId}, {
-				'$push': {favorites: placeId}
+				'$push': {
+					favorites: {
+						'$each': [placeId,],
+						'$position': 0,
+					},
+				}
 			}).then(function () {
 				return res.json("added");
 			});
