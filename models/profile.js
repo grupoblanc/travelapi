@@ -27,7 +27,11 @@ let profileSchema = new Schema({
 	createdAt: {
 		type: Date,
 		default: Date.now
-	}
+	},
+	favorites: [{
+		type: Schema.ObjectId,
+		ref: 'Place',
+	}],
 });
 
 profileSchema.pre('save', function (next) {

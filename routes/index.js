@@ -104,6 +104,61 @@ router.get('/profiles/me', authenticationMiddleware, function(req, res) {
 	});
 });
 
+router.get('/profiles/me/favorites', authenticationMiddleware,
+	function (req, res) {
+		Profile.findById(req.user._id)
+		.populate({
+			path: 'favorites',
+			model: 'Place',
+			populate: {
+				path: 'city',
+				model: 'City'
+			},
+		})
+		.then(function (profile) {
+			if (profile) {
+				return res.json({
+					status: "OK",
+					places: profile.favorites
+				});
+			} else {
+				return res.json({
+					status: "No user found."
+				});
+			}
+		})
+		.catch(function (err) {
+			return res.json({
+				status: err.message,
+			});
+		});
+});
+
+router.post('/profiles/me/favorites/add', authenticationMiddleware, function (req, res) {
+	let placeId = getObjectId(req.body._id);
+	let profileId = req.user._id;
+	Profile.findOne({_id: profileId, favorites: {
+		'$in': [placeId,]
+	}})
+	.then(function (profile) {
+		if (profile) {
+			Profile.update(profile, {
+				'$pullAll': {favorites: [placeId,]}
+			}).then(function () {
+				return res.json("removed");
+			});
+		} else {
+			Profile.update({_id: profileId}, {
+				'$push': {favorites: placeId}
+			}).then(function () {
+				return res.json("added");
+			});
+		}
+	}).catch(function (err) {
+		return res.json(err.message);
+	});
+});
+
 router.get('/profiles/type/:token_type/tokenid/:token_id', function (req, res) {
 	Profile.findOne({type: req.params.token_type, tokenId: req.params.token_id})
 	.then(function (profile) {
@@ -150,15 +205,15 @@ router.post('/profiles/changephoto', authenticationMiddleware, function(req, res
 			if (profile) {
 				profile.photoUrl = photo;
 				profile.save(function() {
-					res.send("Profile updated!");
+					res.json("Profile updated!");
 				})
 			} else {
 				res.status(404);
-				res.send("Profile not found.");
+				res.json("Profile not found.");
 			}
 		}).catch(function (err) {
 			res.status(404);
-			res.send(err.message);
+			res.json(err.message);
 		})
 });
 
@@ -226,7 +281,7 @@ router.post('/profiles/access', function (req, res) {
 
 router.get('/logout', authenticationMiddleware, function(req, res) {
 	req.user = undefined;
-	res.send(res.json({
+	res.json(res.json({
 		status: "OK"
 	}));
 });
