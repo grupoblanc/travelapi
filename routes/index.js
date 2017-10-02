@@ -90,6 +90,7 @@ router.get('/profiles/me', authenticationMiddleware, function(req, res) {
 	.then(function (profile) {
 		if (profile) {
 			Review.find({profile: req.user._id})
+			.sort('-createdAt')
 			.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
 			.then(function (reviews) {
 				return res.json({
@@ -184,6 +185,7 @@ router.get('/profiles/type/:token_type/tokenid/:token_id', function (req, res) {
 	.then(function (profile) {
 		if (profile) {
 			Review.find({profile: profile._id})
+			.sort('-createdAt')
 			.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
 			.then(function (reviews) {
 				return res.json({
@@ -525,6 +527,7 @@ router.get('/places', function(req, res, next) {
 function sendGivenAPlace(res, place, hasReviewed) {
 	Review.find({place: place})
 	.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
+	.sort('-createdAt')
 	.then(function (reviews) {
 		return res.json({
 			place: {
