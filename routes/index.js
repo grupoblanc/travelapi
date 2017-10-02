@@ -371,7 +371,7 @@ router.post('/reviews/add', authenticationMiddleware, function (req, res) {
 	let review = new Review();
 	review.message = req.body.message;
 	if (req.body.message !== undefined
-		&& req.body.message.length() > 0) {
+		&& req.body.message.length > 0) {
 		experience += 2;
 	}
 	review.profile = req.user._id;
@@ -379,7 +379,7 @@ router.post('/reviews/add', authenticationMiddleware, function (req, res) {
 	review.place = req.body.place._id;
 	review.photo = req.body.photo;
 	if (req.body.photo !== undefined
-		&& req.body.photo.length() > 0) {
+		&& req.body.photo.length > 0) {
 		experience += 2;
 	}
 	review.save().then(function () {
