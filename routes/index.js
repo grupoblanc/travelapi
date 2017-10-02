@@ -439,14 +439,14 @@ router.post('/reviews/remove', authenticationMiddleware, function (req, res) {
 		Profile.update({ _id: getObjectId(profileId) }, {
 			"$inc": { experience: -1 }
 		}).then(function() {
-			return res.send("Review removed");
+			return res.json("Review removed");
 		}).catch(function(err) {
 			res.status(404);
-			return res.send(err.message);
+			return res.json(err.message);
 		});
 	}).catch(function(err) {
 		res.status(404);
-		return res.send(err.message);
+		return res.json(err.message);
 	});
 });
 
