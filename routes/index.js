@@ -367,12 +367,21 @@ router.post('/photo/upload', authenticationMiddleware, multer({storage: storage}
 });
 
 router.post('/reviews/add', authenticationMiddleware, function (req, res) {
+	let experience = 1;
 	let review = new Review();
 	review.message = req.body.message;
+	if (req.body.message !== undefined
+		&& req.body.message.length() > 0) {
+		experience += 2;
+	}
 	review.profile = req.user._id;
 	review.rating = req.body.rating;
 	review.place = req.body.place._id;
 	review.photo = req.body.photo;
+	if (req.body.photo !== undefined
+		&& req.body.photo.length() > 0) {
+		experience += 2;
+	}
 	review.save().then(function () {
 		Place.findById(review.place)
 		.then(function (place) {
@@ -384,10 +393,16 @@ router.post('/reviews/add', authenticationMiddleware, function (req, res) {
 					).then(function (result, err) {
 						place.rating = result[0].average;
 						place.save(function() {
-							return res.json({
-								review: review,
-								status: "OK",
-							});
+							experience += req.user.experience;
+							Profile.update({
+								_id: req.user._id}, {
+									experience: experience },
+									function () {
+										return res.json({
+											review: review,
+											status: "OK",
+										});
+									});
 						});
 					}).catch(function (err) {
 						res.status(404);
