@@ -431,6 +431,26 @@ router.post('/reviews/add', authenticationMiddleware, function (req, res) {
 	});
 });
 
+router.post('/reviews/remove', authenticationMiddleware, function (req, res) {
+	let profileId = req.user._id;
+	let reviewId = req.body._id;
+	Review.remove({_id: getObjectId(reviewId), profile: getObjectId(profileId) })
+	.then(function() {
+		Profile.update({ _id: getObjectId(profileId) }, {
+			"$inc": { experience: -1 }
+		}).then(function() {
+			return res.send("Review removed");
+		}).catch(function(err) {
+			res.status(404);
+			return res.send(err.message);
+		});
+	}).catch(function(err) {
+		res.status(404);
+		return res.send(err.message);
+	});
+});
+
+
 router.get('/info/:place_id/lang/:lang', function (req, res) {
 	let id = getObjectId(req.params.place_id);
 	Information.findOne({
