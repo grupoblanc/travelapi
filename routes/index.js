@@ -548,13 +548,30 @@ function sendGivenAPlace(res, place, hasReviewed) {
 	.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
 	.sort('-createdAt')
 	.then(function (reviews) {
-		return res.json({
-			place: {
-				...place._doc,
-				reviews: reviews,
-				userHasReviewed: hasReviewed,
-			},
-			status: "OK"
+		Profile.findOne({favorites: {"$in": [place,] }})
+		.then(function(profile) {
+			let isFavorite = false;
+			if (profile) {
+				isFavorite = true;
+			}
+			return res.json({
+				place: {
+					...place._doc,
+					reviews: reviews,
+					userHasReviewed: hasReviewed,
+					isFavorite: isFavorite,
+				},
+				status: "OK"
+			});
+		}).catch(function(err) {
+			return res.json({
+				place: {
+					...place._doc,
+					reviews: reviews,
+					userHasReviewed: hasReviewed,
+				},
+				status: "OK"
+			});
 		});
 	}).catch(function(err) {
 		res.status(404);
