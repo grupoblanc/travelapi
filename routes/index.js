@@ -395,10 +395,9 @@ router.post('/reviews/add', authenticationMiddleware, function (req, res) {
 					).then(function (result, err) {
 						place.rating = result[0].average;
 						place.save(function() {
-							experience += req.user.experience;
 							Profile.update({
 								_id: req.user._id}, {
-									experience: experience },
+									"$inc": { experience: experience } },
 									function () {
 										return res.json({
 											review: review,
