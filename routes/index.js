@@ -866,7 +866,7 @@ function ifCity(city, milis, req, res) {
 						'picks': 6
 					});
 				});
-				topics.filter(function(topic) {
+				topics = topics.filter(function(topic) {
 					return topic.length > 3
 				});
 				res.json({
