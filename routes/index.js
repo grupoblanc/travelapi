@@ -91,6 +91,7 @@ router.get('/profiles/me', authenticationMiddleware, function(req, res) {
 		if (profile) {
 			Review.find({profile: req.user._id})
 			.sort('-createdAt')
+			.limit(20)
 			.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
 			.then(function (reviews) {
 				return res.json({
@@ -256,6 +257,7 @@ router.post('/profiles/access', function (req, res) {
 		if (user) {
 			Review.find({profile: user._id})
 			.sort('-createdAt')
+			.limit(20)
 			.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
 			.then(function (reviews) {
 				let token = jwt.sign(user._doc, secretCode, {
@@ -314,6 +316,7 @@ router.get('/profiles/:id', function (req, res) {
 		if (profile) {
 			Review.find({profile: profile._id})
 			.sort('-createdAt')
+			.limit(20)
 			.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
 			.then(function (reviews) {
 				return res.json({
@@ -345,6 +348,7 @@ router.get('/profiles/:id', function (req, res) {
 
 router.get('/reviews/:place_id', function (req, res) {
 	Review.find({place: req.params.place_id})
+	.limit(30)
 	.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
 	.sort('-createdAt').then(function (reviews) {
 		return res.json({
@@ -547,6 +551,7 @@ function sendGivenAPlace(res, place, hasReviewed) {
 	Review.find({place: place})
 	.populate([{'path': 'profile'}, {'path': 'place', 'select': 'name address'}])
 	.sort('-createdAt')
+	.limit(10)
 	.then(function (reviews) {
 		Profile.findOne({favorites: {"$in": [place,] }})
 		.then(function(profile) {
