@@ -867,7 +867,7 @@ function ifCity(city, milis, req, res) {
 					});
 				});
 				topics = topics.filter(function(topic) {
-					return topic.length > 3
+					return topic.places.length > 3
 				});
 				res.json({
 						city: {
