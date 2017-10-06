@@ -650,9 +650,11 @@ router.get('/places/:id', function(req, res, next) {
 				} else {
 					place.types = googlePlace.types;
 				}
-				res.json({
-					place,
-					status: "OK"
+				place.save().then(function () {
+					res.json({
+						place,
+						status: "OK"
+					});
 				});
 			} else {
 				res.status(404);
@@ -863,6 +865,9 @@ function ifCity(city, milis, req, res) {
 					topic.places = shuffle.pick(topic.places, {
 						'picks': 6
 					});
+				});
+				topics.filter(function(topic) {
+					return topic.length > 3
 				});
 				res.json({
 						city: {
