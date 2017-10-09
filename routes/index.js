@@ -15,6 +15,7 @@ let City = require('../models/city');
 let Information = require('../models/information');
 let Profile = require('../models/profile');
 let Review  = require('../models/review');
+let config = require('../config');
 
 let storage = multer.diskStorage({
 	destination: './public/uploads',
@@ -55,8 +56,6 @@ function authenticationMiddleware(req, res, next) {
 		});
 	}
 }
-
-
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -472,7 +471,7 @@ router.get('/info/:place_id/lang/:lang', function (req, res) {
 			}).then(function (infos) {
 				if (infos && infos.length > 0) {
 					let baseInfo = infos[0];
-					request("https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20170905T135536Z.e1250fdd1501543f.864dd90aa15b24483f7b53ab80f6b180fae6fb42&text=" +
+					request("https://translate.yandex.net/api/v1.5/tr.json/translate?key=" + config.translate_key + "&text=" +
 				baseInfo.text + "&lang=" + req.params.lang,
 				function(error, response, body) {
 					if (error) {
@@ -624,7 +623,7 @@ router.get('/places/:id', function(req, res, next) {
 		} else {
 			request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
 		req.params.id +
-		'&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q', function (error, response, body) {
+		'&key=' + config.api_key, function (error, response, body) {
 			googleResponse = JSON.parse(body);
 			if (googleResponse.status === "OK") {
 				googlePlace = googleResponse.result;
@@ -796,7 +795,7 @@ function forEachPlace(queryn, cat, result, i, city, req, res) {
 	let googleId = result.place_id;
 		request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
 			googleId +
-			'&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q', function (error, response, body) {
+			'&key=' + config.api_key, function (error, response, body) {
 				googleResponse = JSON.parse(body);
 				if (googleResponse.status === "OK") {
 					googlePlace = googleResponse.result;
@@ -838,7 +837,7 @@ function forEachPlace(queryn, cat, result, i, city, req, res) {
 function forEachCategory(cat, city, req, res) {
 	queryn = cat + " in " + city.name;
 	request("https://maps.googleapis.com/maps/api/place/textsearch/json?query=" +
-		queryn + "&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q", function(error, response, body) {
+		queryn + "&key" + config.api_key, function(error, response, body) {
 			googleResponse = JSON.parse(body);
 			if (googleResponse.status === "OK") {
 					googleResult = googleResponse.results;
@@ -891,7 +890,7 @@ function buildFromGoogle(req, res) {
 				let googleId = req.params.id;
 				request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
 				googleId +
-				'&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q', function (error, response, body) {
+				'&key=' + config.api_key, function (error, response, body) {
 					googleResponse = JSON.parse(body);
 					if (googleResponse.status === "OK") {
 						googlePlace = googleResponse.result;

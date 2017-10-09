@@ -5,3 +5,8 @@
 .multiselect {
 	height: 600px !important;
 }
+
+.image-cover {
+	max-height: 200px;
+	overflow: hidden;
+}

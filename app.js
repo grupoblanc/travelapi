@@ -31,6 +31,7 @@ mongoose.connect(mongoUrl, {
 
 
 let index = require('./routes/index');
+let web = require('./routes/web');
 let dashboard = require('./routes/dashboard');
 let app = express();
 
@@ -80,11 +81,12 @@ app.use(session({
 }));
 
 app.get('/', function (req, res) {
-  res.redirect('/api/v1');
+  res.redirect('/web');
 });
 
 app.site_title = "TripGuide API";
 
+app.use('/web', web);
 app.use('/api/v1', index);
 app.use('/api/site/admin', dashboard);
 
