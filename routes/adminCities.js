@@ -1,6 +1,7 @@
 const express = require('express');
 const request = require('request');
 let router = express.Router();
+const config = require('../config');
 
 let City = require('../models/city');
 let Place = require('../models/place');
@@ -96,7 +97,7 @@ router.post('/fromgoogle', function(req,res, next) {
 	let parent = req.body.parent;
 	request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
 		googleId +
-		'&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q', function (error, response, body) {
+		'&key=' + config.api_key, function (error, response, body) {
 			googleResponse = JSON.parse(body);
 			if (googleResponse.status === "OK") {
 				googlePlace = googleResponse.result;
@@ -116,7 +117,7 @@ router.post('/fromgoogle', function(req,res, next) {
 						queryn = cat + " in " + city.name;
 						request("https://maps.googleapis.com/maps/api/place/textsearch/json?query=" +
 		queryn +
-		"&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q", function(error, response, body) {
+		'&key=' + config.api_key, function(error, response, body) {
 			googleResponse = JSON.parse(body);
 			if (googleResponse.status === "OK") {
 					googleResult = googleResponse.results;
@@ -124,7 +125,7 @@ router.post('/fromgoogle', function(req,res, next) {
 						let googleId = result.place_id;
 						request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
 							googleId +
-							'&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q', function (error, response, body) {
+							'&key=' + config.api_key, function (error, response, body) {
 								googleResponse = JSON.parse(body);
 								if (googleResponse.status === "OK") {
 									googlePlace = googleResponse.result;

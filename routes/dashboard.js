@@ -5,6 +5,7 @@ let router = express.Router();
 let adminCities = require('./adminCities');
 let adminTours = require('./adminTours');
 let adminPlaces = require('./adminPlaces');
+let config = require('../config');
 
 router.get('/', function (req, res, next) {
 	res.render('index', {

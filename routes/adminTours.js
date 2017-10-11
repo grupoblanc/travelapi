@@ -1,6 +1,7 @@
 const express = require('express');
 const request = require('request');
 let router = express.Router();
+const config = require('../config');
 
 let Tour  = require('../models/tour');
 let Place = require('../models/place');
@@ -129,7 +130,7 @@ router.post('/create/:city_id', function(req, res) {
 // 	let googleId = req.body.google_id;
 // 	request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
 // 		googleId +
-// 		'&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q', function (error, response, body) {
+// 		''&key=' + config.api_key, function (error, response, body) {
 // 			googleResponse = JSON.parse(body);
 // 			if (googleResponse.status === "OK") {
 // 				googlePlace = googleResponse.result;

@@ -1,0 +1,24 @@
+extends layout
+block content
+  section(class="section")
+    h1.title(class="has-text-centered")= title
+    div.container
+      div.columns
+        div.column(class="is-4")
+        div.column
+          form(class="form" role="form" method="POST")
+            div.field
+              label.label(for="email") Email
+              div(class="control has-icons-left")
+                input(class="input" id="name" name="email" type="email" placeholder="Email...")
+                span(class="icon is-small is-left")
+                    i(class="fa fa-user")
+                
+            div.field
+              label.label(for="password") Password
+              div.control
+                input(class="input" id="password" name="password" type="password" placeholder="Password...")
+            div.field(class="control")
+              div.is-pulled-right
+                button(class="button is-danger" type="submit")= title
+        div.column(class="is-4")

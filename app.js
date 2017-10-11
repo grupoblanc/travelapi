@@ -68,7 +68,7 @@ app.use(session({
   secret: 'lgk993509jt546j8y8509iu569iuy',
   resave: true,
   cookie: {
-    path: '/api/v1/',
+    path: '/api',
     secure: false,
     maxAge: 604800000,
     httpOnly: false,
@@ -88,7 +88,18 @@ app.site_title = "TripGuide API";
 
 app.use('/web', web);
 app.use('/api/v1', index);
-app.use('/api/site/admin', dashboard);
+
+let login = require('./routes/login')
+app.use('/api/site/login', login);
+
+function authMiddleware (req, res, next){
+	if (req.session.user == undefined) {
+		return res.redirect('/api/site/login');
+	}
+	return next();
+};
+
+app.use('/api/site/admin', authMiddleware, dashboard);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
