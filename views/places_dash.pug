@@ -22,6 +22,8 @@ block content
 					td #{place.name}
 					if place.city !== undefined
 						td #{place.city.name}
+					else
+						td none
 					td #{place.location.lat},#{place.location.lng}
 					td #{place.types}
 					td #{place.createdAt}
