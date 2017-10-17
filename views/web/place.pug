@@ -20,23 +20,23 @@ block content
         p
           strong website: 
           a(href=place.website)= place.website
-      div.card
-        div.card-content
-          div.columns(class="is-multiline")
-            for photo, i in place.photos
-              div.column(class="is-one-quarter")
-                div.image-cover
-                  a(href="https://maps.googleapis.com/maps/api/place/photo?photoreference=" + photo.photo_reference + "&maxwidth=" + photo.width + "&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q"
-                  target="_blank")
-                    img(class="image" src="https://maps.googleapis.com/maps/api/place/photo?photoreference=" + photo.photo_reference + "&maxwidth=" + photo.width + "&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q")
-                    
-    div.container
-      h1.title Reviews
-      for review in reviews
-        div.card
-          div.card-content
-            img(class="image is-64x64" src="/uploads/" + review.profile.photoUrl)
-            h3.subtitle= review.profile.name
-            p= review.message
+    //-   div.card
+    //-     div.card-content
+    //-       div.columns(class="is-multiline")
+    //-         for photo, i in place.photos
+    //-           div.column(class="is-one-quarter")
+    //-             div.image-cover
+    //-               a(href="https://maps.googleapis.com/maps/api/place/photo?photoreference=" + photo.photo_reference + "&maxwidth=" + photo.width + "&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q"
+    //-               target="_blank")
+    //-                 img(class="image" src="https://maps.googleapis.com/maps/api/place/photo?photoreference=" + photo.photo_reference + "&maxwidth=" + photo.width + "&key=AIzaSyAyHEPGUwTXFRbPKNHFVyrjVjnW8cgum3Q")
+    //-                 
+    //- div.container
+    //-   h1.title Reviews
+    //-   for review in reviews
+    //-     div.card
+    //-       div.card-content
+    //-         img(class="image is-64x64" src="/uploads/" + review.profile.photoUrl)
+    //-         h3.subtitle= review.profile.name
+    //-         p= review.message
             
           

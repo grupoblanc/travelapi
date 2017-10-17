@@ -9,7 +9,7 @@ let Place = require('../models/place');
 router.get('/', function (req, res, next) {
 	City.find({}).sort('-createdAt').then(function (results) {
 		res.render('cities_dash', {
-			title: 'Cities Admin',
+			title: 'Ciudades',
 			cities: results
 		});
 	}).catch(function(err) {
@@ -24,7 +24,7 @@ router.get('/', function (req, res, next) {
 
 router.get('/create', function (req, res, next) {
 	res.render('cities_create', {
-		title: 'Add City'
+		title: 'Agregar ciudad'
 	});
 });
 
@@ -48,7 +48,7 @@ router.post('/create', function (req, res, next) {
 router.get('/edit/:id', function (req, res, next) {
 	City.findOne({_id: req.params.id }).then(function (results) {
 		res.render('cities_create', {
-			title: 'Cities Edit',
+			title: 'Editar ciudad',
 			city: results
 		});
 	}).catch(function(err) {

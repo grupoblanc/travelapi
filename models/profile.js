@@ -61,7 +61,7 @@ profileSchema.pre('save', function (next) {
 
 profileSchema.methods.comparePassword = function (candidatePass, callback) {
 	bcrypt.compare(candidatePass, this.password, (err, isMatch) => {
-		cb(err, isMatch);
+		callback(err, isMatch);
 	});
 }
 

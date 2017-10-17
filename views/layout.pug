@@ -2,12 +2,54 @@ doctype html
 html
   head
     title #{title} | #{site_title}
-    link(href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css", rel="stylesheet", integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u", crossorigin="anonymous")
+    link(href="/now-ui-kit/css/bootstrap.min.css", rel="stylesheet")
+    link(href="/now-ui-kit/css/now-ui-kit.css", rel="stylesheet")
     link(rel='stylesheet', href='/css/style.css')
   body
-    div#page
+    nav.navbar.bg-info.navbar-transparent.navbar-light.navbar-expand-lg.fixed-top(color-on-scroll="300")
+      .container
+        .navbar-translate
+          a.navbar-brand(href="/api/site/admin" rel="tooltip" data-placement="bottom") Tripguide
+        .collapse.navbar-collapse.justify-content-end
+          ul.navbar-nav
+            li.nav-item
+              a.nav-link(href="/api/site/admin") 
+                i.now-ui-icons.business_bank
+                | Inicio
+            
+            li.nav-item
+              a.nav-link(href="/api/site/admin/places")
+                i.now-ui-icons.location_pin
+                |  Lugares
+            li.nav-item
+              a.nav-link(href="/api/site/admin/cities") 
+                i.now-ui-icons.location_world
+                |  Cuidades
+            li.nav-item
+              a.nav-link(href="/api/site/admin/tours") 
+                i.now-ui-icons.location_map-big
+                |  Tours
+            li.nav-item.dropdown
+              a.nav-link.btn.btn-neutral.dropdown-toggle(href="/api/site/admin" data-toggle="dropdown" id="adminDropdown" aria-haspopup="true" aria-expanded="false") 
+                i.now-ui-icons.ui-1_simple-add
+                |  Agregar Nuevo
+              ul.dropdown-menu(aria-labelledby="#adminDropdown")
+                a.nav-link(href="/api/site/admin/places/search") Agregar Lugar
+                a.nav-link(href="/api/site/admin/cities/create") Agregar Ciudad
+                a.nav-link(href="/api/site/admin/cities") Agregar Tour
+            li.nav-item
+              a.nav-link(href="/api/site/admin/logout") 
+                i.now-ui-icons.ui-1_simple-remove
+                |  Salir
+    .page-header.page-header-small.clear-filter(filter-color="orange")
+      .page-header-image#dashboard-pages-header(data-parallax="false")
+      .container
+        .content-center
+          h1.title Tripguide
+          h3.description Panel de Administracion
+    div#page.wrapper
       block content
-    script(src="https://code.jquery.com/jquery-3.2.1.min.js"
-        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-        crossorigin="anonymous")
-  script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js", integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa", crossorigin="anonymous")
+    script(src="/now-ui-kit/js/core/jquery.3.2.1.min.js")
+    script(src="/now-ui-kit/js/core/popper.min.js")
+    script(src="/now-ui-kit/js/core/bootstrap.min.js")
+    script(src="/now-ui-kit/js/now-ui-kit.js")

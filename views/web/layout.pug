@@ -1,55 +1,32 @@
 doctype html
 html
   head
-    meta(charset="utf-8")
-    meta(name="viewport" content="width=device-width; initial-scale=1.0")
     title #{title} | #{site_title}
-    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.5.3/css/bulma.min.css")
-    link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Zilla+Slab")
-    link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css")
-    link(rel="stylesheet" href="/css/style.css")
+    link(href="/now-ui-kit/css/bootstrap.min.css", rel="stylesheet")
+    link(href="/now-ui-kit/css/now-ui-kit.css", rel="stylesheet")
+    link(rel='stylesheet', href='/css/style.css')
   body
-    div#app
-      section(class="hero is-info is-bold is-medium")
-        section.hero-header
-          nav(class="nav navbar is-transparent" role="navigation" aria-label="main navigation")
-            div.container
-              div.navbar-brand
-                a(class="navbar-item" href="/")
-                  strong Trip
-                  | guide.com
-                button(class="button navbar-burger")
-                  span
-                  span
-                  span
-              div.navbar-menu
-                div.navbar-end
-                  a(class="navbar-item is-active")
-                    strong Home
-                  a.navbar-item Contacts
-        section.hero-body
-          div(class="container has-text-centered")
-            h1.title Tripguide
-            h3.subtitle Travel app
-            div.social
-              span.icon
-                i(class="fa fa-facebook")
-              span.icon
-                i(class="fa fa-instagram")
-              span.icon
-                i(class="fa fa-twitter")
-              span.icon
-                i(class="fa fa-envelope")
-      section.section
-        block content
-        
-      footer.footer
-        div.container
-          div(class="content has-text-centered")
-            p
-              strong Web 
-              | by 
-              a(href="#") Grupo Blanc
-    script(src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-			  crossorigin="anonymous")
-    script(type="text/javascript" src="/js/index.js")
+    nav.navbar.bg-info.navbar-transparent.navbar-light.navbar-expand-lg.fixed-top(color-on-scroll="300")
+      .container
+        .navbar-translate
+          a.navbar-brand(href="/web" rel="tooltip" data-placement="bottom") Tripguide
+        .collapse.navbar-collapse.justify-content-end
+          ul.navbar-nav
+            li.nav-item
+              a.nav-link(href="/web/contact")
+                i.now-ui-icons.ui-1_email-85
+                |  Contacts
+            li.nav-item
+              a.nav-link(href="/api/site/admin") 
+                i.now-ui-icons.users_single-02
+                |  Dashboard
+    .page-header.page-header.clear-filter(filter-color="orange")
+      .page-header-image#web-header(data-parallax="false")
+      .container
+        .content-center
+          .wrapper
+            block content
+    script(src="/now-ui-kit/js/core/jquery.3.2.1.min.js")
+    script(src="/now-ui-kit/js/core/popper.min.js")
+    script(src="/now-ui-kit/js/core/bootstrap.min.js")
+    script(src="/now-ui-kit/js/now-ui-kit.js")

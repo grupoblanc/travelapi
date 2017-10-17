@@ -65,7 +65,7 @@ router.post('/register', function (req, res) {
 router.post('/', function (req, res) {
   let email = req.body.email;
   let password = req.body.password;
-  Profile.find({
+  Profile.findOne({
     email: email,
     type: 'admin'
   }).then(function (profile) {

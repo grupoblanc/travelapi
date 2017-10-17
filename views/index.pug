@@ -1,11 +1,53 @@
-extends layout
-
-block content
-  h1 TripGuide API
-
-  p
-    a(href='admin/tours') Tours API
-  p
-    a(href='admin/cities') Cities API
-  p
-    a(href='admin/places') Places API
+doctype html
+html
+  head
+    title #{title} | #{site_title}
+    link(href="/now-ui-kit/css/bootstrap.min.css", rel="stylesheet")
+    link(href="/now-ui-kit/css/now-ui-kit.css", rel="stylesheet")
+    link(rel='stylesheet', href='/css/style.css')
+  body
+    nav.navbar.bg-info.navbar-transparent.navbar-light.navbar-expand-lg.fixed-top(color-on-scroll="300")
+      .container
+        .navbar-translate
+          a.navbar-brand(href="/api/site/admin" rel="tooltip" data-placement="bottom") Tripguide
+        .collapse.navbar-collapse.justify-content-end
+          ul.navbar-nav
+            li.nav-item
+              a.nav-link(href="/api/site/admin") 
+                i.now-ui-icons.business_bank
+                | Inicio
+            
+            li.nav-item
+              a.nav-link(href="/api/site/admin/places")
+                i.now-ui-icons.location_pin
+                |  Lugares
+            li.nav-item
+              a.nav-link(href="/api/site/admin/cities") 
+                i.now-ui-icons.location_world
+                |  Cuidades
+            li.nav-item
+              a.nav-link(href="/api/site/admin/tours") 
+                i.now-ui-icons.location_map-big
+                |  Tours
+            li.nav-item.dropdown
+              a.nav-link.btn.btn-neutral.dropdown-toggle(href="/api/site/admin" data-toggle="dropdown" id="adminDropdown" aria-haspopup="true" aria-expanded="false") 
+                i.now-ui-icons.ui-1_simple-add
+                |  Agregar Nuevo
+              ul.dropdown-menu(aria-labelledby="#adminDropdown")
+                a.nav-link(href="/api/site/admin/places/search") Agregar Lugar
+                a.nav-link(href="/api/site/admin/cities/create") Agregar Ciudad
+                a.nav-link(href="/api/site/admin/cities") Agregar Tour
+            li.nav-item
+              a.nav-link(href="/api/site/admin/logout") 
+                i.now-ui-icons.ui-1_simple-remove
+                |  Salir
+    .page-header.clear-filter(filter-color="orange")
+      .page-header-image#dashboard-header(data-parallax="false")
+      .container
+        .content-center
+          h1.title Tripguide
+          h3.description Panel de Administracion
+    script(src="/now-ui-kit/js/core/jquery.3.2.1.min.js")
+    script(src="/now-ui-kit/js/core/popper.min.js")
+    script(src="/now-ui-kit/js/core/bootstrap.min.js")
+    script(src="/now-ui-kit/js/now-ui-kit.js")

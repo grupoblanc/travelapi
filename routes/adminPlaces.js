@@ -12,7 +12,7 @@ router.get('/', function (req, res, next) {
 	.populate('city')
 	.sort('-createdAt').then(function (results) {
 		res.render('places_dash', {
-			title: 'Places Admin',
+			title: 'Lugares',
 			places: results
 		});
 	}).catch(function(err) {
@@ -28,7 +28,7 @@ router.get('/', function (req, res, next) {
 router.get('/create', function (req, res, next) {
 	City.find({}).then(function(results) {
 		res.render('places_create', {
-			title: 'Add Place',
+			title: 'Agregar un lugar',
 			cities: results
 		});
 	}).catch(function(err) {
@@ -43,7 +43,7 @@ router.get('/edit/:id', function (req, res, next) {
 	Place.findOne({_id: req.params.id }).then(function (results) {
 		City.find({}).then(function(cities) {
 			res.render('places_create', {
-				title: 'Places Edit',
+				title: 'Editar lugar',
 				place: results,
 				cities: cities
 			});
@@ -167,7 +167,7 @@ router.post('/fromgoogle', function(req,res, next) {
 router.get('/search', function(req, res, next) {
 	City.find({}).then(function (result) {
 		res.render('places_search', {
-			title: 'Search from google',
+			title: 'Agregar desde Google Places',
 			cities: result
 		});
 	}).catch(function(err) {

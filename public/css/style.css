@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700");
+
 #page {
 	padding: 30px;
 }
@@ -9,4 +11,16 @@
 .image-cover {
 	max-height: 200px;
 	overflow: hidden;
+}
+
+#dashboard-header {
+	background-image: url('/now-ui-kit/img/bg4.jpg');
+}
+
+#dashboard-pages-header {
+	background-image: url('/now-ui-kit/img/bg8.jpg');
+}
+
+#web-header {
+	background-image: url('/now-ui-kit/img/bg8.jpg');
 }

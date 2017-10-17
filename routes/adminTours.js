@@ -9,7 +9,7 @@ let Place = require('../models/place');
 router.get('/', function (req, res, next) {
 	Tour.find({}).sort('-createdAt').then(function (results) {
 		res.render('tours_dash', {
-			title: 'Tours Admin',
+			title: 'Tours',
 			tours: results
 		});
 	}).catch(function(err) {
@@ -27,7 +27,7 @@ router.get('/create/:city_id', function(req, res, next) {
 		Place.find({ types: {"$in": ["tour"]}})
 		.then(function(tours) {
 			res.render('tours_create', {
-				title: 'Create Tour',
+				title: 'Crear Tour',
 				tours: tours,
 				places: places,
 			});

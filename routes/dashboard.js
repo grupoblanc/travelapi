@@ -9,8 +9,13 @@ let config = require('../config');
 
 router.get('/', function (req, res, next) {
 	res.render('index', {
-		title: 'Dashboard',
+		title: 'Panel de administracion',
 	});
+});
+
+router.get('/logout', function (req, res, next) {
+	req.session.user = undefined;
+	return res.redirect('/api/site/login');
 });
 
 router.use('/cities', adminCities);

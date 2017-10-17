@@ -8,18 +8,18 @@ block content
 				div.col-sm-offset-1(class="col-sm-2")
 					label(for="name") Name:
 				div.col-sm-6
-					input.form-control(placeholder="City Name", name="name", id="name", required="true" value=city.name)
+					input.form-control(placeholder="Nombre de la ciudad", name="name", id="name", required="true" value=city.name)
 			div.form-group.col-sm-12
 				div.col-sm-offset-1(class="col-sm-2")
 					label(for="parent") Parent (country or region):
 				div.col-sm-6
-					input.form-control(placeholder="City Parent", name="parent", id="parent", required="true" value=city.parent)
+					input.form-control(placeholder="Ubicacion de la cuidad", name="parent", id="parent", required="true" value=city.parent)
 
 			div.form-group.col-sm-12
 				div.col-sm-offset-1(class="col-sm-2")
 					label(for="description") Description:
 				div.col-sm-6
-					textarea.form-control(placeholder="City Description", name="description", id="description" value=city.description)
+					textarea.form-control(placeholder="Descripcion de la ciudad", name="description", id="description" value=city.description)
 
 			div.form-group.col-sm-12
 				div.col-sm-offset-1(class="col-sm-2")
@@ -32,9 +32,9 @@ block content
 					label(for="latitude") Location:
 				div.col-sm-6
 					div.col-sm-6
-						input.form-control(placeholder="City Latitude", name="latitude", id="latitude", required="true" value=city.location.lat)
+						input.form-control(placeholder="City Latitud", name="latitude", id="latitude", required="true" value=city.location.lat)
 					div.col-sm-6
-						input.form-control(placeholder="City Longitude", name="longitude", id="longitude", required="true" value=city.location.lng)
+						input.form-control(placeholder="City Longitud", name="longitude", id="longitude", required="true" value=city.location.lng)
 
 			div.form-group.col-sm-12
 				div.col-sm-offset-1(class="col-sm-2")
@@ -52,21 +52,21 @@ block content
 		form.form(role="form" action="create", method="POST")
 			div.form-group.col-sm-12
 				div.col-sm-offset-1(class="col-sm-2")
-					label(for="name") Name:
+					label(for="name") Nombre:
 				div.col-sm-6
-					input.form-control(placeholder="City Name", name="name", id="name", required="true")
+					input.form-control(placeholder="Nombre de la ciudad", name="name", id="name", required="true")
 
 			div.form-group.col-sm-12
 				div.col-sm-offset-1(class="col-sm-2")
-					label(for="parent") Parent (country or region):
+					label(for="parent") Ubicacion (ciudad o region):
 				div.col-sm-6
-					input.form-control(placeholder="City Parent", name="parent", id="parent", required="true")
+					input.form-control(placeholder="Ubicacion de la ciudad", name="parent", id="parent", required="true")
 
 			div.form-group.col-sm-12
 				div.col-sm-offset-1(class="col-sm-2")
 					label(for="description") Description:
 				div.col-sm-6
-					textarea.form-control(placeholder="City Description", name="description", id="description")
+					textarea.form-control(placeholder="Descripcion de la ciudad", name="description", id="description")
 
 			div.form-group.col-sm-12
 				div.col-sm-offset-1(class="col-sm-2")
@@ -94,4 +94,4 @@ block content
 
 			div.form-group(class="col-sm-offset-2 col-sm-6")
 				div.pull-right
-					button.btn(type="submit" class="btn-danger") Add City
+					button.btn(type="submit" class="btn-danger") Agregar cuidad
