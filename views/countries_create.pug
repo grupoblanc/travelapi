@@ -1,43 +1,12 @@
 extends layout
 block content
 	h1 #{title}
-	if city !== undefined
+	if country !== undefined
 		form.form(role="form" action="../edit", method="POST")
-			input(type="hidden" name="_id" value= city._id)
-			div.form-group.col-sm-12
-				label(for="name") Nombre:
-				input.form-control(placeholder="Nombre de la ciudad", name="name", id="name", required="true" value=city.name)
-			div.form-group.col-sm-12
-				label(for="parent") Region (pais o region):
-				input.form-control(placeholder="Ubicacion de la cuidad", name="parent", id="parent", required="true" value=city.parent)
-
-			div.form-group.col-sm-12
-				label(for="description") Descripcion:
-				textarea.form-control(placeholder="Descripcion de la ciudad", name="description", id="description" value=city.description)
-
-			div.form-group.col-sm-12
-				label(for="google_id") Google ID:
-				input.form-control(placeholder="Google ID", name="google_id", id="google_id" value=city.googleId)
-
-			div.form-group.col-sm-12
-				label(for="latitude") Ubicacion:
-				div.col-sm-6
-					input.form-control(placeholder="City Latitud", name="latitude", id="latitude", required="true" value=city.location.lat)
-				div.col-sm-6
-					input.form-control(placeholder="City Longitud", name="longitude", id="longitude", required="true" value=city.location.lng)
-
-			div.form-group.col-sm-12
-				div.col-sm-offset-1(class="col-sm-2")
-					label(for="reference") Photo:
-				div.col-sm-6
-					div.col-sm-6
-						input.form-control(placeholder="Photo reference", name="photo_reference", id="photo_reference", required="true" value=city.photo.reference)
-					div.col-sm-6
-						input.form-control(placeholder="Photo width", name="photo_width", id="photo_width", required="true" value=city.photo.width)
-
+			input(type="hidden" name="_id" value= country._id)
 			div.form-group(class="col-sm-offset-2 col-sm-6")
 				div.pull-right
-					button.btn(type="submit" class="btn-danger") Editar Ciudad
+					button.btn(type="submit" class="btn-danger") Editar Pais
 	else
 		form.form(role="form" action="create", method="POST")
 			div.form-group.col-sm-12

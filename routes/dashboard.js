@@ -5,6 +5,8 @@ let router = express.Router();
 let adminCities = require('./adminCities');
 let adminTours = require('./adminTours');
 let adminPlaces = require('./adminPlaces');
+let adminCountries = require('./adminCountries');
+let adminRegions = require('./adminRegions');
 let config = require('../config');
 
 router.get('/', function (req, res, next) {
@@ -21,5 +23,7 @@ router.get('/logout', function (req, res, next) {
 router.use('/cities', adminCities);
 router.use('/tours', adminTours);
 router.use('/places', adminPlaces);
+router.use('/countries', adminCountries);
+router.use('/regions', adminRegions);
 
 module.exports = router;

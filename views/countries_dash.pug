@@ -1,0 +1,33 @@
+extends layout
+block content
+	h1 #{title}
+	a(href='countries/create', class="btn btn-primary") Crear Nuevo
+	table.table(class='')
+		thead
+			tr
+				th #
+				th Nombre
+				th Ubicacion
+				th Fecha
+				th Google ID
+				th Acciones
+		tbody
+			each country, i in countries
+				tr
+					td #{i+1}
+					td #{country.name}
+					td #{country.location.lat},#{country.location.lng}
+					td #{country.createdAt}
+					td #{country.googleId}
+					td
+						a(href="/api/site/admin/countries/edit/" + country._id) Editar
+						br
+						a(href="/api/site/admin/countries/remove/" + country._id)  Eliminar
+						br
+						a(href="/api/site/admin/tours/create/" + country._id) Crear Tour
+
+	
+	form.form(action='/api/site/admin/countries/fromgoogle' class="form-inline" method="POST")
+		div.form-group
+			input.form-control(type="text" placeholder="Google Place ID" id="google_id" name="google_id" required)
+		button(type="submit" class="btn btn-danger") Agregar desde Google

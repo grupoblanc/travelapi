@@ -1,15 +1,16 @@
 extends layout
 block content
 	h1 #{title}
+	a(href='cities/create', class="btn btn-primary") Crear Nueva
 	table.table(class='')
 		thead
 			tr
 				th #
-				th Name
-				th Location
-				th Created At
+				th Nombre
+				th Ubicacion
+				th Fecha
 				th Google ID
-				th Actions
+				th Acciones
 		tbody
 			each city, i in cities
 				tr
@@ -25,11 +26,10 @@ block content
 						br
 						a(href="/api/site/admin/tours/create/" + city._id) Crear Tour
 
-	a(href='cities/create', class="btn btn-primary") Crear Nueva
-	p
+	
 	form.form(action='/api/site/admin/cities/fromgoogle' class="form-inline" method="POST")
 		div.form-group
-			input.form-control(type="text" placeholder="Google Place ID" id="google_id" name="google_id")
+			input.form-control(type="text" placeholder="Google Place ID" id="google_id" name="google_id" required)
 		div.form-group
-			input.form-control(type="text" placeholder="Ubicacion (ciudad o region)" id="parent" name="parent")
+			input.form-control(type="text" placeholder="Ubicacion (pais o region)" id="parent" name="parent" required)
 		button(type="submit" class="btn btn-danger") Agregar desde Google

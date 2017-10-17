@@ -7,7 +7,8 @@ let Tour  = require('../models/tour');
 let Place = require('../models/place');
 
 router.get('/', function (req, res, next) {
-	Tour.find({}).sort('-createdAt').then(function (results) {
+	Tour.find({}).sort('-createdAt')
+	.populate('parent').then(function (results) {
 		res.render('tours_dash', {
 			title: 'Tours',
 			tours: results
