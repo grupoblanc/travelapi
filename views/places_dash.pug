@@ -20,7 +20,8 @@ block content
 				tr
 					td #{i+1}
 					td #{place.name}
-					td #{place.city.name}
+					if place.city !== undefined
+						td #{place.city.name}
 					td #{place.location.lat},#{place.location.lng}
 					td #{place.types}
 					td #{place.createdAt}
