@@ -7,27 +7,22 @@ block content
 			tr
 				th #
 				th Nombre
-				th Ubicacion
+				th Pais
 				th Fecha
-				th Google ID
 				th Acciones
 		tbody
 			each region, i in regions
 				tr
 					td #{i+1}
 					td #{region.name}
-					td #{region.location.lat},#{region.location.lng}
+					if region.country !== undefined
+						td #{region.country.name}
+					else
+						td
 					td #{region.createdAt}
-					td #{region.googleId}
 					td
 						a(href="/api/site/admin/regions/edit/" + region._id) Editar
 						br
 						a(href="/api/site/admin/regions/remove/" + region._id)  Eliminar
 						br
 						a(href="/api/site/admin/tours/create/" + region._id) Crear Tour
-
-	
-	form.form(action='/api/site/admin/regions/fromgoogle' class="form-inline" method="POST")
-		div.form-group
-			input.form-control(type="text" placeholder="Google Place ID" id="google_id" name="google_id" required)
-		button(type="submit" class="btn btn-danger") Agregar desde Google

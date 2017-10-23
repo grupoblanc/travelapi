@@ -1,8 +1,11 @@
 extends layout
 block content
 	h1 #{title}
-	a(href='countries/create', class="btn btn-primary") Crear Nuevo
-	table.table(class='')
+	br
+	a.btn.btn-danger(href="/api/site/admin/countries/create") Crear Nuevo
+	br
+	br
+	table.table(class='table-hover')
 		thead
 			tr
 				th #
@@ -23,11 +26,5 @@ block content
 						a(href="/api/site/admin/countries/edit/" + country._id) Editar
 						br
 						a(href="/api/site/admin/countries/remove/" + country._id)  Eliminar
-						br
-						a(href="/api/site/admin/tours/create/" + country._id) Crear Tour
 
 	
-	form.form(action='/api/site/admin/countries/fromgoogle' class="form-inline" method="POST")
-		div.form-group
-			input.form-control(type="text" placeholder="Google Place ID" id="google_id" name="google_id" required)
-		button(type="submit" class="btn btn-danger") Agregar desde Google

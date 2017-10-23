@@ -1,0 +1,37 @@
+extends layout
+block content
+  h1= title
+  div.row
+    div.col-sm-8.mx-auto
+      if region !== undefined
+        form.form(role="form" method="POST" action="create")
+          div.form-group
+            label(for="name") Nombre:
+            input.form-control(name="name" id="name" placeholder="Nombre de la region" required value=region.name)
+          div.form-group
+            label(for="country") Pais:
+            select.form-control(name="country" id="country" required)
+              for country in countries
+                if country._id == region.country
+                  option(value=country._id)= country.name
+                else
+                  option(value=country._id)= country.name
+          div.form-group.col-sm-8
+            div.float-md-right
+              button.btn.btn-primary(type="submit") Crear region
+      else
+        form.form(role="form" method="POST" action="create")
+          div.form-group
+            label(for="name") Nombre:
+            input.form-control(name="name" id="name" placeholder="Nombre de la region" required)
+          div.form-group
+            label(for="googleId") Google ID:
+            input.form-control(name="googleId" id="googleId" placeholder="GoogleId" required)
+          div.form-group
+            label(for="country") Pais:
+            select.form-control(name="country" id="country" required)
+              for country in countries
+                option(value=country._id)= country.name
+          div.form-group.col-sm-8
+            div.float-md-right
+              button.btn.btn-primary(type="submit") Crear region

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-let Place = require('./place');
-
 let Schema = mongoose.Schema;
+
+let Place = require('./place');
 
 let citySchema = new Schema({
 	name: {
@@ -11,6 +11,11 @@ let citySchema = new Schema({
 	parent: {
 		type: String
 	},
+	category: String,
+	region: {
+    ref: 'Region',
+    type: Schema.ObjectId
+  },
 	description: {
 		type: String,
 	},

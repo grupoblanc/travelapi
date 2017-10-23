@@ -1,0 +1,31 @@
+extends layout
+
+block content
+  h1 Buscar Google ID
+  br
+  form.form(role="form" action="idfinder" method="POST")
+    div.row
+      div.col-md-8
+        input.form-control(type="text" name="text_query" placeholder="Escribe el nombre del lugar" required)
+      div.col-md-1
+      button.btn.btn-primary(type="submit") Buscar ID
+  br
+  if results !== undefined
+    table.table.table-hover
+      thead
+        tr
+          td Nombre
+          td Ubicacion
+          td Categorias
+          td GoogleID
+      tbody
+        for place in results
+          tr
+            td= place.name
+            td= place.formatted_address
+            td
+              if place.types
+                for cat in place.types
+                  span #{cat},  
+            td
+              strong= place.place_id

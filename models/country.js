@@ -35,7 +35,7 @@ let countrySchema = new Schema({
 });
 
 countrySchema.pre('remove', function (next) {
-  Region.remove({parent: this._id}).exec();
+  Region.remove({country: this._id}).exec();
   next();
 });
 

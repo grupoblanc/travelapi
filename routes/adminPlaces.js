@@ -7,6 +7,26 @@ let Place = require('../models/place');
 let City = require('../models/city');
 let Information = require('../models/information');
 
+router.get('/idfinder', function (req, res, next) {
+	return res.render('placeid_finder', {
+		title: 'Buscar ID',
+	});
+});
+
+router.post('/idfinder', function (req, res, next) {
+	var query = req.body.text_query;
+	request('https://maps.googleapis.com/maps/api/place/textsearch/json?query=' +
+		query +
+		'&key=' + config.api_key,
+		function (error, response, body) {
+			googleResponse = JSON.parse(body);
+			return res.render('placeid_finder', {
+				title: 'Buscar ID',
+				results: googleResponse.results
+			});
+	});
+});
+
 router.get('/', function (req, res, next) {
 	Place.find({})
 	.populate('city')
@@ -144,7 +164,6 @@ router.post('/fromgoogle', function(req,res, next) {
 					place.types = googlePlace.types;
 				}
 				delete place._id;
-				delete place._doc._id;
 				place.save().then(function(place) {
 					res.redirect('/api/site/admin/places');
 				}).catch(function (err) {

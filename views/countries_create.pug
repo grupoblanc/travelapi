@@ -1,50 +1,52 @@
 extends layout
 block content
 	h1 #{title}
-	if country !== undefined
-		form.form(role="form" action="../edit", method="POST")
-			input(type="hidden" name="_id" value= country._id)
-			div.form-group(class="col-sm-offset-2 col-sm-6")
-				div.pull-right
-					button.btn(type="submit" class="btn-danger") Editar Pais
-	else
-		form.form(role="form" action="create", method="POST")
-			div.form-group.col-sm-12
-				label(for="name") Nombre:
-				input.form-control(placeholder="Nombre de la ciudad", name="name", id="name", required="true")
-
-			div.form-group.col-sm-12
-				label(for="parent") Ubicacion (ciudad o region):
-				input.form-control(placeholder="Ubicacion de la ciudad", name="parent", id="parent", required="true")
-
-			div.form-group.col-sm-12
-				label(for="description") Descripcion:
-				textarea.form-control(placeholder="Descripcion de la ciudad", name="description", id="description")
-
-			div.form-group.col-sm-12
-				div.col-sm-offset-1(class="col-sm-2")
-					label(for="google_id") Google ID:
-				div.col-sm-6
-					input.form-control(placeholder="Google ID", name="google_id", id="google_id")
-
-			div.form-group.col-sm-12
-				div.col-sm-offset-1(class="col-sm-2")
-					label(for="latitude") Ubicacion:
-				div.col-sm-6
-					div.col-sm-6
-						input.form-control(placeholder="City Latitude", name="latitude", id="latitude", required="true")
-					div.col-sm-6
-						input.form-control(placeholder="City Longitude", name="longitude", id="longitude", required="true")
-
-			div.form-group.col-sm-12
-				div.col-sm-offset-1(class="col-sm-2")
-					label(for="reference") Photo:
-				div.col-sm-6
-					div.col-sm-6
-						input.form-control(placeholder="Photo reference", name="photo_reference", id="photo_reference", required="true")
-					div.col-sm-6
-						input.form-control(placeholder="Photo width", name="photo_width", id="photo_width", required="true")
-
-			div.form-group(class="col-sm-offset-2 col-sm-6")
-				div.pull-right
-					button.btn(type="submit" class="btn-danger") Agregar cuidad
+	div.row
+		div.col-sm-6.mx-auto
+			if country !== undefined
+				form.form(role="form" action="../edit", method="POST")
+					input(type="hidden" name="_id" value= country._id)
+					div.form-group.col-sm-12
+						label(for="name") Nombre:
+						input.form-control(placeholder="Nombre del Pais", name="name", id="name", required="true" value= country.name)
+					div.form-group.col-sm-12
+						label(for="description") Descripcion:
+						textarea.form-control(placeholder="Descripcion del pais", name="description", id="description" value= country.description)
+					div.form-group.col-sm-12
+						label(for="capital") Capital:
+						input.form-control(placeholder="Capital del pais", name="capital", id="capital" value= country.capital)
+					div.form-group.col-sm-12
+						label(for="currency") Moneda Oficial:
+						input.form-control(placeholder="Moneda Oficial del pais", name="currency", id="currency" value= country.currency)
+					div.form-group.col-sm-12
+						label(for="continent") Continente:
+						input.form-control(placeholder="Continente", name="continent", id="continent" value= country.continent)
+					div.form-group.col-sm-12
+						label(for="flagPhotoUrl") Bandera Imagen URL:
+						input.form-control(placeholder="Bandera Imagen URL", name="flagPhotoUrl", id="flagPhotoUrl" value= country.flagPhotoUrl)
+					div.form-group(class="ml-auto col-sm-6")
+						div.pull-right
+							button.btn(type="submit" class="btn-danger") Editar
+			else
+				form.form(role="form" action="create", method="POST")
+					div.form-group.col-sm-12
+						label(for="google_id") Google ID:
+						input.form-control(placeholder="Google ID", name="google_id", id="google_id", required="true")
+					div.form-group.col-sm-12
+						label(for="description") Descripcion:
+						textarea.form-control(placeholder="Descripcion del pais", name="description", id="description")
+					div.form-group.col-sm-12
+						label(for="capital") Capital:
+						input.form-control(placeholder="Capital del pais", name="capital", id="capital")
+					div.form-group.col-sm-12
+						label(for="currency") Moneda Oficial:
+						input.form-control(placeholder="Moneda Oficial del pais", name="currency", id="currency")
+					div.form-group.col-sm-12
+						label(for="continent") Continente:
+						input.form-control(placeholder="Continente", name="continent", id="continent")
+					div.form-group.col-sm-12
+						label(for="flagPhotoUrl") Bandera Imagen URL:
+						input.form-control(placeholder="Bandera Imagen URL", name="flagPhotoUrl", id="flagPhotoUrl")
+					div.form-group(class="ml-auto col-sm-12")
+						div.float-md-right
+							button.btn(type="submit" class="btn-danger") Crear Pais

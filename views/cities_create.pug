@@ -8,8 +8,10 @@ block content
 				label(for="name") Nombre:
 				input.form-control(placeholder="Nombre de la ciudad", name="name", id="name", required="true" value=city.name)
 			div.form-group.col-sm-12
-				label(for="parent") Region (pais o region):
-				input.form-control(placeholder="Ubicacion de la cuidad", name="parent", id="parent", required="true" value=city.parent)
+				label(for="region") Region:
+				select.form-control(name="region", id="region", required="true")
+					for region in regions
+						option(value=region._id)= region.name
 
 			div.form-group.col-sm-12
 				label(for="description") Descripcion:

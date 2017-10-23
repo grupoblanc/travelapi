@@ -1,13 +1,20 @@
 extends layout
 block content
 	h1 #{title}
-	a(href='cities/create', class="btn btn-primary") Crear Nueva
+	form.form(action='/api/site/admin/cities/fromgoogle' class="form-inline" method="POST")
+		div.form-group
+			input.form-control(type="text" placeholder="Google Place ID" id="google_id" name="google_id" required)
+		div.form-group
+			select.form-control( id="region" name="region" required)
+				for region in regions
+					option(value=region._id)= region.name
+		button(type="submit" class="btn btn-danger") Agregar desde Google
 	table.table(class='')
 		thead
 			tr
 				th #
 				th Nombre
-				th Ubicacion
+				th Region
 				th Fecha
 				th Google ID
 				th Acciones
@@ -16,7 +23,7 @@ block content
 				tr
 					td #{i+1}
 					td #{city.name}
-					td #{city.location.lat},#{city.location.lng}
+					td #{city.region.name}
 					td #{city.createdAt}
 					td #{city.googleId}
 					td
@@ -25,11 +32,3 @@ block content
 						a(href="/api/site/admin/cities/remove/" + city._id)  Eliminar
 						br
 						a(href="/api/site/admin/tours/create/" + city._id) Crear Tour
-
-	
-	form.form(action='/api/site/admin/cities/fromgoogle' class="form-inline" method="POST")
-		div.form-group
-			input.form-control(type="text" placeholder="Google Place ID" id="google_id" name="google_id" required)
-		div.form-group
-			input.form-control(type="text" placeholder="Ubicacion (pais o region)" id="parent" name="parent" required)
-		button(type="submit" class="btn btn-danger") Agregar desde Google

@@ -5,12 +5,18 @@ const config = require('../config');
 
 let City = require('../models/city');
 let Place = require('../models/place');
+let Region = require('../models/region');
 
 router.get('/', function (req, res, next) {
-	City.find({}).sort('-createdAt').then(function (results) {
-		res.render('cities_dash', {
-			title: 'Ciudades',
-			cities: results
+	City.find({}).sort('-createdAt').populate('region').then(function (results) {
+		Region.find()
+		.sort('-createdAt')
+		.then(function (regions) {
+			res.render('cities_dash', {
+				title: 'Ciudades',
+				cities: results,
+				regions: regions
+			});
 		});
 	}).catch(function(err) {
 		console.log(err);
@@ -47,9 +53,14 @@ router.post('/create', function (req, res, next) {
 
 router.get('/edit/:id', function (req, res, next) {
 	City.findOne({_id: req.params.id }).then(function (results) {
-		res.render('cities_create', {
-			title: 'Editar ciudad',
-			city: results
+		Region.find()
+		.sort('-createdAt')
+		.then(function (regions) {
+			res.render('cities_create', {
+				title: 'Editar ciudad',
+				city: results,
+				regions: regions
+			});
 		});
 	}).catch(function(err) {
 		console.log(err);
@@ -64,7 +75,7 @@ router.post('/edit', function (req, res, next) {
 	let cityData = {
 		"name": req.body.name,
 		"googleId": req.body.google_id,
-		"parent": req.body.parent,
+		"region": req.body.region,
 		"description": req.body.description,
 		"location": {
 			"lat": req.body.latitude,
@@ -94,7 +105,7 @@ router.get('/remove/:id', function (req, res, next) {
 
 router.post('/fromgoogle', function(req,res, next) {
 	let googleId = req.body.google_id;
-	let parent = req.body.parent;
+	let region = req.body.region;
 	request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
 		googleId +
 		'&key=' + config.api_key, function (error, response, body) {
@@ -104,7 +115,7 @@ router.post('/fromgoogle', function(req,res, next) {
 				let city =  new City();
 				city.name = googlePlace.name;
 				city.googleId = googlePlace.place_id;
-				city.parent = parent;
+				city.region = region;
 				city.location.lat = googlePlace.geometry.location.lat;
 				city.location.lng = googlePlace.geometry.location.lng;
 				let photo = googlePlace.photos[0];

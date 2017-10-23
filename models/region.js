@@ -6,6 +6,14 @@ let regionSchema = new Schema({
   name: {
     type: String
   },
+  country: {
+    ref: 'Country',
+    type: Schema.ObjectId
+  },
+  location: {
+    lat: Number,
+    lng: Number
+  },
   photo: {
     reference: String,
     width: Number
@@ -17,7 +25,7 @@ let regionSchema = new Schema({
 });
 
 regionSchema.pre('save', function(next) {
-  City.remove({parent: this._id}).exec();
+  City.remove({region: this._id}).exec();
   next();
 });
 
