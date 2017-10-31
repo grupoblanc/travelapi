@@ -5,11 +5,19 @@ let tourSchema = new Schema({
 	name: {
 			type: String,
 			required: true
-		},
+	},
+	category: {
+		type: Number,
+		default: 0,
+	},
 	description: String,
 	city: {
 		type: Schema.ObjectId,
-		ref: 'City'
+		ref: 'City',
+	},
+	region: {
+		type: Schema.ObjectId,
+		ref: 'Region',
 	},
 	parent: {
 		type: Schema.ObjectId,
@@ -32,6 +40,5 @@ let tourSchema = new Schema({
 		default: Date.now
 	}
 });
-
 
 module.exports = mongoose.model('Tour', tourSchema);

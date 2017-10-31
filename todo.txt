@@ -1,8 +1,12 @@
 
-
 * Core
-  - City category: A - B
-  - Create a new tour model.
-  - tour category: general, culture or bla.
-  - On delete cascade for all models
-  - Tours from both cities and regions
+  [-] City category: A - B
+  [-] Create a new tour model.
+  [-] tour category: general, culture or bla.
+  [-] On delete cascade for all models
+  [-] Tours from both cities and regions
+  [ ] create adminTours (view, create, edit, delete)
+  [-] index tour
+      [-] tours by city.
+      [-] tours by region.
+      [-] tour by id.

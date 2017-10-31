@@ -22,8 +22,10 @@ router.get('/', function (req, res, next) {
 	});
 });
 
-router.get('/create/:city_id', function(req, res, next) {
-	Place.find({'city': req.params.city_id})
+router.get('/create/:parent/:parent_id', function(req, res, next) {
+	let parent = req.params.parent;
+	let parentId = req.params.parent_id;
+	Place.find({'city': req.params.parent_id})
 	.then(function(places) {
 		Place.find({ types: {"$in": ["tour"]}})
 		.then(function(tours) {

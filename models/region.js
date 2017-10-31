@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 let City = require('./city');
+let Tour = require('./tour');
 
 let regionSchema = new Schema({
   name: {
@@ -26,6 +27,7 @@ let regionSchema = new Schema({
 
 regionSchema.pre('save', function(next) {
   City.remove({region: this._id}).exec();
+  Tour.remove({ region: this._id}).exec();
   next();
 });
 

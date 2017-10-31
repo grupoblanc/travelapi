@@ -677,23 +677,6 @@ router.get('/places/:id', function(req, res, next) {
 });
 
 router.get('/tours', function (req, res, next) {
-	Place.find({types: { $in: ['tour']}})
-	.populate('city')
-	.sort('-createdAt').then(function (places) {
-		res.json({
-			places,
-			status: "OK"
-		});
-	}).catch(function(err) {
-		res.status(404);
-		res.json({
-			tours: [],
-			status: err.message
-		});
-	})
-});
-
-router.get('/tours/all', function (req, res, next) {
 	Tour.find({})
 	.populate('city')
 	.sort('-createdAt').then(function (tours) {
@@ -752,8 +735,39 @@ router.get('/tours/single/:place_id', function (req, res, next) {
 	})
 });
 
-router.get('/tours/all/:id', function (req, res, next) {
-	Tour.findById(req.params.id)
+router.get('/tours/all/:parent/:parent_id', function (req, res, next) {
+	let parent = req.params.parent;
+	let parentId = req.params.parent_id;
+	let model = {};
+	if (parent === "city") {
+		model = City.find({ city: parentId });
+	} else if (parent === "region") {
+		model = Tour.find({ region: parentId });
+	} else {
+		return res.json({
+			tours: [],
+			status: "Select either a tour or a city."
+		});
+	}
+	model
+	.populate('city')
+	.sort('-createdAt').then(function (tours) {
+		res.json({
+			tours,
+			status: "OK"
+		});
+	}).catch(function(err) {
+		res.status(404);
+		res.json({
+			tours: [],
+			status: err.message
+		});
+	});
+});
+
+router.get('/tours/:id', function (req, res, next) {
+	let id = req.params.id;
+	Tour.findById(id)
 	.populate('places')
 	.then(function (tour) {
 		res.json({
@@ -765,7 +779,7 @@ router.get('/tours/all/:id', function (req, res, next) {
 		res.json({
 			status: err.message
 		});
-	})
+	});
 });
 
 router.get('/cities', function (req, res, next) {
