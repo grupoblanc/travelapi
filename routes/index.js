@@ -746,7 +746,7 @@ router.get('/tours/all/:parent/:parent_id', function (req, res, next) {
 	} else {
 		return res.json({
 			tours: [],
-			status: "Select either a tour or a city."
+			status: "Select either a region or a city."
 		});
 	}
 	model

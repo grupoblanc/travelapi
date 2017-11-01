@@ -12,7 +12,10 @@ let citySchema = new Schema({
 	parent: {
 		type: String
 	},
-	category: String,
+	category: {
+		type: String,
+		default: 'b'
+	},
 	region: {
     ref: 'Region',
     type: Schema.ObjectId

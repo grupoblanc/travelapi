@@ -2,13 +2,12 @@ extends layout
 block content
 	h1 #{title}
 	form.form(role="form" method="POST")
+		input(type="text" hidden="true" value=parent._id name="parent_id")
 		div.form-group.col-sm-12
 			div.col-sm-offset-1(class="col-sm-2")
-				label(for="parent") Parent:
+				label(for="parent") Origen:
 			div.col-sm-6
-				select(class="form-control" name="parent" id="parent" required="true")
-					for tour in tours
-						option(value=tour._id)= tour.name
+				input.form-control.disabled(type="text" disabled value=parent.name name="parent_name")
 		div.form-group.col-sm-12
 			div.col-sm-offset-1(class="col-sm-2")
 				label(for="name") Name:
@@ -33,11 +32,9 @@ block content
 			div.col-sm-offset-1(class="col-sm-2")
 				label(for="places") Places:
 			div.col-sm-6
-				select.multiselect(multiple="multiple" name="places" id="places")
-					for place in places
-						option(value=place._id)= place.name
-
-
-
+				if places
+					select.multiselect(multiple="multiple" name="places" id="places")
+						for place in places
+							option(value=place._id)= place.name
 		div.pull-right
 			button(type="submit" class="btn btn-danger") Create Tour

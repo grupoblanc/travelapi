@@ -2,9 +2,17 @@ const express = require('express');
 const request = require('request');
 let router = express.Router();
 const config = require('../config');
+let ObjectId = require('mongoose').Types.ObjectId;
 
 let Tour  = require('../models/tour');
 let Place = require('../models/place');
+let City = require('../models/city');
+let Region = require('../models/region');
+
+function  getObjectId(param) {
+	return new ObjectId((!ObjectId.isValid(param))
+		? "123456789012" : param);
+}
 
 router.get('/', function (req, res, next) {
 	Tour.find({}).sort('-createdAt')
@@ -25,40 +33,79 @@ router.get('/', function (req, res, next) {
 router.get('/create/:parent/:parent_id', function(req, res, next) {
 	let parent = req.params.parent;
 	let parentId = req.params.parent_id;
-	Place.find({'city': req.params.parent_id})
-	.then(function(places) {
-		Place.find({ types: {"$in": ["tour"]}})
-		.then(function(tours) {
-			res.render('tours_create', {
+	let parentModel = {};
+	let childrenModel = {};
+	if (parent === "cities") {
+		parentModel = City.findById(parentId);
+		childrenModel = Place.find({ city: parentId});
+	} else if (parent === "regions") {
+		parentModel = Region.findById(parentId);
+		childrenModel = Place.find({}).populate('city');
+	} else {
+		return res.render('error', {
+			err: {
+				message: "Debes seleccionar al menos una ciudad o region de origen."
+			}
+		});
+	}
+	parentModel
+	.then(function (parent) {
+		childrenModel
+		.sort('name')
+		.then(function(places) {
+
+			if (parent === "regions") {
+				places = places.filter(function (place) {
+					return place.city.region === getObjectId(parentId);
+				});
+			}
+
+			return res.render('tours_create', {
 				title: 'Crear Tour',
-				tours: tours,
-				places: places,
+				places,
+				parent,
 			});
 		}).catch(function(err) {
-			console.log(err);
-			res.json({
-				status: err.message
-			});
+			return res.render('error', { err });
 		});
-	}).catch(function (err) {
-		console.log(err);
-		res.json({
-			status: err.message
-		});
+	}).catch(function(err) {
+		return res.render('error', { err });
 	});
+
+	// model
+	// .then(function(places) {
+	// 	Place.find({ types: {"$in": ["tour"]}})
+	// 	.then(function(tours) {
+	// 		res.render('tours_create', {
+	// 			title: 'Crear Tour',
+	// 			tours: tours,
+	// 			places: places,
+	// 		});
+	// 	}).catch(function(err) {
+	// 		console.log(err);
+	// 		res.json({
+	// 			status: err.message
+	// 		});
+	// 	});
+	// }).catch(function (err) {
+	// 	console.log(err);
+	// 	res.json({
+	// 		status: err.message
+	// 	});
+	// });
 
 });
 
 router.post('/create/:city_id', function(req, res) {
-	let tour = new Tour(req.body);
-	tour.save().then(function() {
-		res.redirect("/api/site/admin/tours");
-	}).catch(function (err) {
-		console.log(err);
-		res.json({
-			status: err.message
-		});
-	});
+	// let tour = new Tour(req.body);
+	// tour.save().then(function() {
+	// 	res.redirect("/api/site/admin/tours");
+	// }).catch(function (err) {
+	// 	console.log(err);
+	// 	res.json({
+	// 		status: err.message
+	// 	});
+	// });
 });
 
 // router.get('/create', function (req, res, next) {

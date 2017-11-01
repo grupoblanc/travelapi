@@ -16,6 +16,12 @@ block content
 			div.form-group.col-sm-12
 				label(for="description") Descripcion:
 				textarea.form-control(placeholder="Descripcion de la ciudad", name="description", id="description" value=city.description)
+			
+			div.form-group.col-sm-12
+				label(for="category") Categoria:
+				select.form-control(name="category", placeholder="Seleccione una categoria" id="category" value=city.category)
+					option(value="a") A
+					option(value="b") B
 
 			div.form-group.col-sm-12
 				label(for="google_id") Google ID:
@@ -53,6 +59,12 @@ block content
 			div.form-group.col-sm-12
 				label(for="description") Descripcion:
 				textarea.form-control(placeholder="Descripcion de la ciudad", name="description", id="description")
+				
+			div.form-group.col-sm-12
+				label(for="category") Categoria:
+				select.form-control(name="category", placeholder="Seleccione una categoria" id="category")
+					option(value="a") A
+					option(value="b") B
 
 			div.form-group.col-sm-12
 				div.col-sm-offset-1(class="col-sm-2")
