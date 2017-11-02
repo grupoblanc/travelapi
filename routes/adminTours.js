@@ -31,16 +31,16 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/create/:parent/:parent_id', function(req, res, next) {
-	let parent = req.params.parent;
+	let parentName = req.params.parent;
 	let parentId = req.params.parent_id;
 	let parentModel = {};
 	let childrenModel = {};
-	if (parent === "cities") {
+	if (parentName === "cities") {
 		parentModel = City.findById(parentId);
 		childrenModel = Place.find({ city: parentId});
-	} else if (parent === "regions") {
+	} else if (parentName === "regions") {
 		parentModel = Region.findById(parentId);
-		childrenModel = Place.find({}).populate('city');
+		childrenModel = City.find({ region: parentId }).select('_id');
 	} else {
 		return res.render('error', {
 			err: {
@@ -54,17 +54,29 @@ router.get('/create/:parent/:parent_id', function(req, res, next) {
 		.sort('name')
 		.then(function(places) {
 
-			if (parent === "regions") {
-				places = places.filter(function (place) {
-					return place.city.region === getObjectId(parentId);
+			if (parentName === "regions") {
+				// cities
+				let cities = places.map(function(p) {
+					return p._id;
+				});
+				Place.find({ city: {'$in': cities }})
+				.sort('name')
+				.then(function (result) {
+					return res.render('tours_create', {
+						title: 'Crear Tour',
+						places: result,
+						parent
+					});
+				}).catch(function (err) {
+					return res.render('error', { err });
+				});
+			} else {
+				return res.render('tours_create', {
+					title: 'Crear Tour',
+					places,
+					parent,
 				});
 			}
-
-			return res.render('tours_create', {
-				title: 'Crear Tour',
-				places,
-				parent,
-			});
 		}).catch(function(err) {
 			return res.render('error', { err });
 		});
