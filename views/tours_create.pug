@@ -1,40 +1,80 @@
 extends layout
 block content
 	h1 #{title}
-	form.form(role="form" method="POST")
-		input(type="text" hidden="true" value=parent._id name="parent_id")
-		div.form-group.col-sm-12
-			div.col-sm-offset-1(class="col-sm-2")
-				label(for="parent") Origen:
+	if tour !== undefined
+		form.form(role="form" method="POST")
+			input(type="text" hidden="true" value=tour._id)
+			input(type="text" hidden="true" value=parent._id name="parent_id")
+			div.form-group.col-sm-12
+				div.col-sm-offset-1(class="col-sm-2")
+					label(for="parent") Origen:
 			div.col-sm-6
 				input.form-control.disabled(type="text" disabled value=parent.name name="parent_name")
-		div.form-group.col-sm-12
-			div.col-sm-offset-1(class="col-sm-2")
-				label(for="name") Name:
-			div.col-sm-6
-				input.form-control(type="text" placeholder="Tour name" name="name" id="name")
-		div.form-group.col-sm-12
-			div.col-sm-offset-1(class="col-sm-2")
-				label(for="totalDistance") Distance:
-			div.col-sm-6
-				input.form-control(type="text" placeholder="Distance in meters" name="totalDistance" id="totalDistance")
-		div.form-group.col-sm-12
-			div.col-sm-offset-1(class="col-sm-2")
-				label(for="totalTime") Time:
-			div.col-sm-6
-				input.form-control(type="text" placeholder="Time in minutes" name="totalTime" id="totalTime")
-		div.form-group.col-sm-12
-			div.col-sm-offset-1(class="col-sm-2")
-				label(for="googleId") Google ID:
-			div.col-sm-6
-				input.form-control(type="text" placeholder="Google ID" name="googleId" id="googleId")
-		div.form-group.col-sm-12
-			div.col-sm-offset-1(class="col-sm-2")
-				label(for="places") Places:
-			div.col-sm-6
-				if places
-					select.multiselect(multiple="multiple" name="places" id="places")
-						for place in places
-							option(value=place._id)= place.name
-		div.pull-right
-			button(type="submit" class="btn btn-danger") Create Tour
+			div.form-group.col-sm-12
+				div.col-sm-offset-1(class="col-sm-2")
+					label(for="name") Name:
+				div.col-sm-6
+					input.form-control(type="text" placeholder="Tour name" name="name" id="name" value=tour.name)
+			div.form-group.col-sm-12
+				div.col-sm-offset-1(class="col-sm-2")
+					label(for="totalDistance") Distance:
+				div.col-sm-6
+					input.form-control(type="text" placeholder="Distance in meters" name="totalDistance" id="totalDistance" value=tour.totalDistance)
+			div.form-group.col-sm-12
+				div.col-sm-offset-1(class="col-sm-2")
+					label(for="totalTime") Time:
+				div.col-sm-6
+					input.form-control(type="text" placeholder="Time in minutes" name="totalTime" id="totalTime" value=tour.totalTime)
+			div.form-group.col-sm-12
+				div.col-sm-offset-1(class="col-sm-2")
+					label(for="googleId") Google ID:
+				div.col-sm-6
+					input.form-control(type="text" placeholder="Google ID" name="googleId" id="googleId" value=tour.googleId)
+			div.form-group.col-sm-12
+				div.col-sm-offset-1(class="col-sm-2")
+					label(for="places") Places:
+				div.col-sm-6
+					if places
+						select.multiselect(multiple="multiple" name="places" id="places" value=tour.places)
+							for place in places
+								option(value=place._id)= place.name
+			div.pull-right
+				button(type="submit" class="btn btn-danger") Create Tour
+	else
+		form.form(role="form" method="POST")
+			input(type="text" hidden="true" value=parent._id name="parent_id")
+			div.form-group.col-sm-12
+				div.col-sm-offset-1(class="col-sm-2")
+					label(for="parent") Origen:
+				div.col-sm-6
+					input.form-control.disabled(type="text" disabled value=parent.name name="parent_name")
+			div.form-group.col-sm-12
+				div.col-sm-offset-1(class="col-sm-2")
+					label(for="name") Name:
+				div.col-sm-6
+					input.form-control(type="text" placeholder="Tour name" name="name" id="name")
+			div.form-group.col-sm-12
+				div.col-sm-offset-1(class="col-sm-2")
+					label(for="totalDistance") Distance:
+				div.col-sm-6
+					input.form-control(type="text" placeholder="Distance in meters" name="totalDistance" id="totalDistance")
+			div.form-group.col-sm-12
+				div.col-sm-offset-1(class="col-sm-2")
+					label(for="totalTime") Time:
+				div.col-sm-6
+					input.form-control(type="text" placeholder="Time in minutes" name="totalTime" id="totalTime")
+			div.form-group.col-sm-12
+				div.col-sm-offset-1(class="col-sm-2")
+					label(for="googleId") Google ID:
+				div.col-sm-6
+					input.form-control(type="text" placeholder="Google ID" name="googleId" id="googleId")
+			div.form-group.col-sm-12
+				div.col-sm-offset-1(class="col-sm-2")
+					label(for="places") Places:
+				div.col-sm-6
+					if places
+						select.multiselect(multiple="multiple" name="places" id="places")
+							for place in places
+								option(value=place._id)= place.name
+			div.pull-right
+				button(type="submit" class="btn btn-danger") Create Tour

@@ -19,10 +19,6 @@ let tourSchema = new Schema({
 		type: Schema.ObjectId,
 		ref: 'Region',
 	},
-	parent: {
-		type: Schema.ObjectId,
-		ref: 'Place'
-	},
 	totalTime: Number,
 	totalDistance: Number,
 	photo: {

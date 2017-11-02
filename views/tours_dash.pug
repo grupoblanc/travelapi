@@ -5,10 +5,13 @@ block content
 		thead
 			tr
 				th #
-				th Name
-				th Total time
-				th Total distance
-				th Parent
+				th Nombre
+				th Tiempo
+				th Distancia
+				th Origen
+				th Lugares
+				th Accion
+				
 		tbody
 			each tour, i in tours
 				tr
@@ -16,4 +19,15 @@ block content
 					td= tour.name
 					td= tour.totalTime
 					td= tour.totalDistance
-					td= tour.parent.name
+					if tour.city
+						td= tour.city.name
+					if tour.region
+						td= tour.region.name
+					td= tour.places.length
+					td
+						if tour.city
+							a(href="/api/site/admin/tours/edit/cities/" + tour._id) Editar
+						if tour.region
+							a(href="/api/site/admin/tours/edit/regions/" + tour._id) Editar
+						br
+						a(href="/api/site/admin/tours/remove/" + tour._id)  Eliminar

@@ -16,7 +16,7 @@ function  getObjectId(param) {
 
 router.get('/', function (req, res, next) {
 	Tour.find({}).sort('-createdAt')
-	.populate('parent').then(function (results) {
+	.populate([{path: 'region'}, {path: 'city'}]).then(function (results) {
 		res.render('tours_dash', {
 			title: 'Tours',
 			tours: results
@@ -83,41 +83,78 @@ router.get('/create/:parent/:parent_id', function(req, res, next) {
 	}).catch(function(err) {
 		return res.render('error', { err });
 	});
-
-	// model
-	// .then(function(places) {
-	// 	Place.find({ types: {"$in": ["tour"]}})
-	// 	.then(function(tours) {
-	// 		res.render('tours_create', {
-	// 			title: 'Crear Tour',
-	// 			tours: tours,
-	// 			places: places,
-	// 		});
-	// 	}).catch(function(err) {
-	// 		console.log(err);
-	// 		res.json({
-	// 			status: err.message
-	// 		});
-	// 	});
-	// }).catch(function (err) {
-	// 	console.log(err);
-	// 	res.json({
-	// 		status: err.message
-	// 	});
-	// });
-
 });
 
-router.post('/create/:city_id', function(req, res) {
-	// let tour = new Tour(req.body);
-	// tour.save().then(function() {
-	// 	res.redirect("/api/site/admin/tours");
-	// }).catch(function (err) {
-	// 	console.log(err);
-	// 	res.json({
-	// 		status: err.message
-	// 	});
-	// });
+router.get('/edit/:parent/:tour_id', function(req, res, next) {
+	let tourId = req.params.tour_id;
+	let parentName = req.params.parent;
+
+	Tour.findById(tourId)
+	.populate([{path: 'city'}, {path: 'region'}])
+	.then(function (tour) {
+		let parent = {};
+		let placesQuery = {};
+		if (parentName === "cities") {
+			parent = tour.city;
+			placesQuery = Place.find({city: tour.city._id})
+			.sort('name');
+		} else if (parentName === "regions") {
+			parent = tour.region;
+			placesQuery = City.find({ region: tour.region._id });
+		}
+		placesQuery
+		.then(function (places) {
+				if (parentName === "regions") {
+					// cities
+				let cities = places.map(function(p) {
+					return p._id;
+				});
+				Place.find({ city: {'$in': cities }})
+				.sort('name')
+				.then(function (result) {
+					return res.render('tours_create', {
+						title: 'Crear Tour',
+						places: result,
+						parent,
+						tour
+					});
+				}).catch(function (err) {
+					return res.render('error', { err });
+				});
+				} else if (parentName === "cities") {
+					return res.render('tours_create', {
+						title: 'Editar Tour',
+						places,
+						parent,
+						tour
+					});
+				}
+		}).catch(function (err) {
+			return res.render('err', { err });
+		});
+	}).catch(function (err) {
+		return res.render('error', { err });
+	});
+});
+
+router.post('/create/:parent/:parent_id', function(req, res) {
+	let parent = req.params.parent;
+	let tour = new Tour({
+		...req.body,
+	});
+	if (parent === "cities") {
+		tour.city = req.params.parent_id;
+	} else if (parent === "regions") {
+		tour.region = req.params.parent_id;
+	}
+	tour.save().then(function() {
+		res.redirect("/api/site/admin/tours");
+	}).catch(function (err) {
+		console.log(err);
+		res.json({
+			status: err.message
+		});
+	});
 });
 
 // router.get('/create', function (req, res, next) {
@@ -179,14 +216,14 @@ router.post('/create/:city_id', function(req, res) {
 // 	});
 // });
 
-// router.get('/remove/:id', function (req, res, next) {
-// 	let cityId = req.params.id
-// 	City.remove({ _id: cityId }).then(function () {
-// 		res.redirect('/api/site/admin/cities');
-// 	}).catch(function (err) {
-// 		res.json(error);
-// 	});
-// });
+router.get('/remove/:id', function (req, res, next) {
+	let tour = req.params.id
+	Tour.remove({ _id: tour }).then(function () {
+		res.redirect('/api/site/admin/tours');
+	}).catch(function (err) {
+		res.render('error', { err });
+	});
+});
 
 // router.post('/fromgoogle', function(req,res, next) {
 // 	let googleId = req.body.google_id;
