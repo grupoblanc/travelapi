@@ -13,6 +13,10 @@
 	overflow: hidden;
 }
 
+.ms-container {
+    width: 100% !important;
+}
+
 #dashboard-header {
 	background-image: url('/now-ui-kit/img/bg4.jpg');
 }

@@ -37,9 +37,12 @@ block content
 					if places
 						select.multiselect(multiple="multiple" name="places" id="places" value=tour.places)
 							for place in places
-								option(value=place._id)= place.name
+								if tour.places.indexOf(place._id) >= 0
+									option(value=place._id selected)= place.name
+								else
+									option(value=place._id)= place.name
 			div.pull-right
-				button(type="submit" class="btn btn-danger") Create Tour
+				button(type="submit" class="btn btn-danger") Editar Tour
 	else
 		form.form(role="form" method="POST")
 			input(type="text" hidden="true" value=parent._id name="parent_id")
@@ -77,4 +80,4 @@ block content
 							for place in places
 								option(value=place._id)= place.name
 			div.pull-right
-				button(type="submit" class="btn btn-danger") Create Tour
+				button(type="submit" class="btn btn-danger") Crear Tour

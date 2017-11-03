@@ -7,3 +7,9 @@ function myMap() {
 
   var map = new google.maps.Map(document.getElementById("map"), mapOptions);
 }
+
+$(document).ready(function () {
+  $('#places').multiSelect({
+    keepOrder: true,
+  });
+});

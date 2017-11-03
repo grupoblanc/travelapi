@@ -85,6 +85,21 @@ router.get('/create/:parent/:parent_id', function(req, res, next) {
 	});
 });
 
+router.post('/edit/:parent/:tour_id', function(req, res, next) {
+	let tourId = req.params.tour_id;
+	let parentName = req.params.parent;
+
+	let tour = new Tour(req.body);
+	delete tour._id;
+	delete tour._doc._id;
+	Tour.update({ _id: tourId }, tour)
+	.then(function () {
+			return res.redirect('/api/site/admin/tours');
+	}).catch(function (err) {
+		return res.render('error', { err });
+	});
+});
+
 router.get('/edit/:parent/:tour_id', function(req, res, next) {
 	let tourId = req.params.tour_id;
 	let parentName = req.params.parent;
