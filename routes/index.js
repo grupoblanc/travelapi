@@ -693,54 +693,12 @@ router.get('/tours', function (req, res, next) {
 	})
 });
 
-
-router.get('/tours/single/:place_id', function (req, res, next) {
-	Place.findById(req.params.place_id)
-	.populate('city')
-	.then(function (place) {
-		if (place) {
-			Tour.find({parent: place._id})
-			.sort([['totalTime', 'ascending'],['totalDistance', 'ascending']])
-			.then(function (tours) {
-				res.json({
-					place: {
-						name: place.name,
-						city: place.city,
-						googleId: place.googleId,
-						address: place.address,
-						_id: place._id,
-						photo: place.photo,
-						photos: place.photos,
-						tours: tours
-					},
-					status: "OK"
-				});
-			}).catch(function(err) {
-				res.status(404);
-				res.json({
-					status: err.message
-				});
-			});
-		} else {
-			res.status(404);
-			res.json({
-				status: 'No tour founds'
-			});
-		}
-	}).catch(function(err) {
-		res.status(404);
-		res.json({
-			status: err.message
-		});
-	})
-});
-
 router.get('/tours/all/:parent/:parent_id', function (req, res, next) {
 	let parent = req.params.parent;
 	let parentId = req.params.parent_id;
 	let model = {};
 	if (parent === "city") {
-		model = City.find({ city: parentId });
+		model = Tour.find({ city: parentId });
 	} else if (parent === "region") {
 		model = Tour.find({ region: parentId });
 	} else {
@@ -750,7 +708,7 @@ router.get('/tours/all/:parent/:parent_id', function (req, res, next) {
 		});
 	}
 	model
-	.populate('city')
+	.populate([{path: 'city'}, {path: 'region'}])
 	.sort('-createdAt').then(function (tours) {
 		res.json({
 			tours,
@@ -768,7 +726,7 @@ router.get('/tours/all/:parent/:parent_id', function (req, res, next) {
 router.get('/tours/:id', function (req, res, next) {
 	let id = req.params.id;
 	Tour.findById(id)
-	.populate('places')
+	.populate([{path: 'places'}, {path: 'city'}, {path: 'region'}])
 	.then(function (tour) {
 		res.json({
 			tour: tour,
@@ -861,8 +819,8 @@ function forEachCategory(cat, city, req, res) {
 						}
 					});
 				}
-			});
-		}
+	});
+}
 
 function ifCity(city, milis, req, res) {
 	setTimeout(function() {
@@ -898,50 +856,50 @@ function ifCity(city, milis, req, res) {
 	}, milis);
 }
 
-function buildFromGoogle(req, res) {
-	if (req.params.id.length == 27) {
-				// google city
-				let googleId = req.params.id;
-				request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
-				googleId +
-				'&key=' + config.api_key, function (error, response, body) {
-					googleResponse = JSON.parse(body);
-					if (googleResponse.status === "OK") {
-						googlePlace = googleResponse.result;
-						let city =  new City();
-						city.name = googlePlace.name;
-						city.parent =
-						googlePlace.address_components[googlePlace.address_components.length - 1].long_name;
-						city.googleId = googlePlace.place_id;
-						city.location.lat = googlePlace.geometry.location.lat;
-						city.location.lng = googlePlace.geometry.location.lng;
-						let photo = googlePlace.photos[0];
-						city.photo.reference = photo.photo_reference;
-						city.photo.width = photo.width;
-						city.topics = [];
-						city.save().then(function(city) {
-							let categories = ["restaurant", "beach",
-							"hotel", "cafe", "park"];
-							categories.forEach(function (cat, i) {
-								forEachCategory(cat, city, res);
-								if (i == categories.length - 1) {
-									ifCity(city, 2500, req, res);
-								}
-							});
-						});
-					}  else {
-						res.status(404);
-						res.json({
-							status: error.message
-						});
-					}
-				});
-			} else {
-				res.json({
-					status: "ERROR"
-				});
-			}
-}
+// function buildFromGoogle(req, res) {
+// 	if (req.params.id.length == 27) {
+// 				// google city
+// 				let googleId = req.params.id;
+// 				request('https://maps.googleapis.com/maps/api/place/details/json?placeid=' +
+// 				googleId +
+// 				'&key=' + config.api_key, function (error, response, body) {
+// 					googleResponse = JSON.parse(body);
+// 					if (googleResponse.status === "OK") {
+// 						googlePlace = googleResponse.result;
+// 						let city =  new City();
+// 						city.name = googlePlace.name;
+// 						city.parent =
+// 						googlePlace.address_components[googlePlace.address_components.length - 1].long_name;
+// 						city.googleId = googlePlace.place_id;
+// 						city.location.lat = googlePlace.geometry.location.lat;
+// 						city.location.lng = googlePlace.geometry.location.lng;
+// 						let photo = googlePlace.photos[0];
+// 						city.photo.reference = photo.photo_reference;
+// 						city.photo.width = photo.width;
+// 						city.topics = [];
+// 						city.save().then(function(city) {
+// 							let categories = ["restaurant", "beach",
+// 							"hotel", "cafe", "park"];
+// 							categories.forEach(function (cat, i) {
+// 								forEachCategory(cat, city, res);
+// 								if (i == categories.length - 1) {
+// 									ifCity(city, 2500, req, res);
+// 								}
+// 							});
+// 						});
+// 					}  else {
+// 						res.status(404);
+// 						res.json({
+// 							status: error.message
+// 						});
+// 					}
+// 				});
+// 			} else {
+// 				res.json({
+// 					status: "ERROR"
+// 				});
+// 			}
+// }
 
 function updateCityViews(city) {
 	City.update({_id: city._id},
@@ -958,7 +916,9 @@ function cityCallback(req, res) {
 			ifCity(city, 0, req, res);
 			updateCityViews(city);
 		} else {
-			buildFromGoogle(req, res);
+			return res.json({
+				status: 'No city found',
+			})
 		}
 	}).catch(function (err) {
 		res.json(err.message);
@@ -973,7 +933,6 @@ router.get('/cities/:id', function(req, res, next) {
 		});
 	};
 	cityCallback(req, res);
-
 });
 
 router.get('/where', function (req, res) {

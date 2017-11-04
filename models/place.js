@@ -12,7 +12,8 @@ let placeSchema = new Schema({
 	},
 	city: {
 		type: Schema.ObjectId,
-		ref: 'City'
+		ref: 'City',
+		required: true,
 	},
 	address: {
 		type: String,

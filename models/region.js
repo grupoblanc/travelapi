@@ -9,7 +9,8 @@ let regionSchema = new Schema({
   },
   country: {
     ref: 'Country',
-    type: Schema.ObjectId
+    type: Schema.ObjectId,
+    required: true,
   },
   location: {
     lat: Number,

@@ -18,7 +18,8 @@ let citySchema = new Schema({
 	},
 	region: {
     ref: 'Region',
-    type: Schema.ObjectId
+    type: Schema.ObjectId,
+		required: true,
   },
 	description: {
 		type: String,
