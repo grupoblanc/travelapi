@@ -745,6 +745,7 @@ router.get('/tours/:id', function (req, res, next) {
 router.get('/cities', function (req, res, next) {
 	City.find({})
 	.sort('-views')
+	.populate('region')
 	.limit(15)
 	.then(function (cities) {
 		res.json({
@@ -913,7 +914,9 @@ function cityCallback(req, res) {
 	City.findOne({$or: [
 		{_id: getObjectId(req.params.id) },
 		{googleId: req.params.id} ]
-	}).then(function(city) {
+	})
+	.populate("region")
+	.then(function(city) {
 		if (city) {
 			ifCity(city, 0, req, res);
 			updateCityViews(city);
