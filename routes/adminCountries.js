@@ -6,7 +6,7 @@ const config = require('../config');
 let Country = require('../models/country');
 
 router.get('/', function (req, res, next) {
-	Country.find({}).sort('-createdAt').then(function (results) {
+	Country.find({}).sort('name').then(function (results) {
 		res.render('countries_dash', {
 			title: 'Paises',
 			countries: results

@@ -9,7 +9,7 @@ let Country = require('../models/country');
 router.get('/', function (req, res, next) {
 	Region.find({})
 		.populate('country')
-		.sort('-createdAt').then(function (results) {
+		.sort('name').then(function (results) {
 		res.render('regions_dash', {
 			title: 'Regiones',
 			regions: results
@@ -86,7 +86,7 @@ router.get('/edit/:region_id', function(req, res) {
 });
 
 router.post('/edit', function(req, res) {
-
+	return res.redirect("/api/site/admin/regions");
 });
 
 router.get('/remove/:region_id', function (req, res) {

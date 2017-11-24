@@ -30,7 +30,7 @@ router.post('/idfinder', function (req, res, next) {
 router.get('/', function (req, res, next) {
 	Place.find({})
 	.populate('city')
-	.sort('-createdAt').then(function (results) {
+	.sort('name').then(function (results) {
 		res.render('places_dash', {
 			title: 'Lugares',
 			places: results

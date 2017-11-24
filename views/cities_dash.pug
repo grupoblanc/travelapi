@@ -7,7 +7,7 @@ block content
 		div.form-group
 			select.form-control( id="region" name="region" required)
 				for region in regions
-					option(value=region._id)= region.name
+					option(value=region._id)= region.name + ' (' + region.country.name + ')'
 		button(type="submit" class="btn btn-danger") Agregar desde Google
 	table.table(class='')
 		thead

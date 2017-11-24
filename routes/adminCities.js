@@ -10,7 +10,8 @@ let Region = require('../models/region');
 router.get('/', function (req, res, next) {
 	City.find({}).sort('-createdAt').populate('region').then(function (results) {
 		Region.find()
-		.sort('-createdAt')
+		.sort('name')
+		.populate('country')
 		.then(function (regions) {
 			res.render('cities_dash', {
 				title: 'Ciudades',
