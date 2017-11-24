@@ -15,6 +15,8 @@ let City = require('../models/city');
 let Information = require('../models/information');
 let Profile = require('../models/profile');
 let Review  = require('../models/review');
+let Region = require('../models/region');
+let Country = require('../models/country');
 let config = require('../config');
 
 let storage = multer.diskStorage({
@@ -933,6 +935,111 @@ router.get('/cities/:id', function(req, res, next) {
 		});
 	};
 	cityCallback(req, res);
+});
+
+
+router.get('/regions', function (req, res, next) {
+	Region.find({})
+	.sort('name')
+	.then(function (regions) {
+		if (regions) {
+			return res.json({
+				regions,
+				status: "OK"
+			});
+		} else {
+			return res.json({
+				status: 'Not found'
+			});
+		}
+	}).catch(function (err) {
+		return res.json({
+			status: err.message
+		});
+	});
+});
+
+router.get('/regions/:region_id', function (req, res, next) {
+	Region.findById(req.params.region_id)
+	.then(function (region) {
+		if (region) {
+			City.find({ region: region._id })
+			.sort('name')
+			.then(function (cities) {
+				return res.json({
+					region: {
+						...region._doc,
+						cities: cities,
+					},
+					status: "OK"
+				});
+			}).catch(function (err) {
+				return res.json({
+					status: 'Not found'
+				});
+			});
+		} else {
+			return res.json({
+				status: 'Not found'
+			});
+		}
+	}).catch(function (err) {
+		return res.json({
+			status: err.message
+		});
+	});
+});
+
+router.get('/countries', function (req, res, next) {
+	Country.find({})
+	.sort('name')
+	.then(function (countries) {
+		if (countries) {
+			return res.json({
+				countries,
+				status: "OK"
+			});
+		} else {
+			return res.json({
+				status: 'Not found'
+			});
+		}
+	}).catch(function (err) {
+		return res.json({
+			status: err.message
+		});
+	});
+});
+
+router.get('/countries/:country_id', function (req, res, next) {
+	Country.findById(req.params.country_id)
+	.then(function (country) {
+		if (country) {
+			Region.find({ country: country._id })
+			.sort('name')
+			.then(function (regions) {
+				return res.json({
+					country: {
+						...country._doc,
+						regions: regions,
+					},
+					status: "OK"
+				});
+			}).catch(function (err) {
+				return res.json({
+					status: 'Not found'
+				});
+			});
+		} else {
+			return res.json({
+				status: 'Not found'
+			});
+		}
+	}).catch(function (err) {
+		return res.json({
+			status: err.message
+		});
+	});
 });
 
 router.get('/where', function (req, res) {
