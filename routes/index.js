@@ -944,6 +944,7 @@ router.get('/cities/:id', function(req, res, next) {
 router.get('/regions', function (req, res, next) {
 	Region.find({})
 	.sort('name')
+	.populate('country')
 	.then(function (regions) {
 		if (regions) {
 			return res.json({
