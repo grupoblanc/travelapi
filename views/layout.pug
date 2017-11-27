@@ -58,13 +58,14 @@ html(lang="es")
               a.nav-link(href="/api/site/admin/logout") 
                 i.now-ui-icons.ui-1_simple-remove
                 |  Salir
-    .page-header.page-header-small.clear-filter(filter-color="orange")
+    .page-header.page-header-small.clear-filter
       .page-header-image#dashboard-pages-header(data-parallax="false")
       .container
         .content-center
           h1.title Tripguide
           h3.description Panel de Administracion
     div#page.wrapper
+      p(style="position: absolute; top: 360px; color: #fff;") Playa de Arena Gorda
       block content
     script(src="/now-ui-kit/js/core/jquery.3.2.1.min.js")
     script(src="/now-ui-kit/js/core/popper.min.js")
