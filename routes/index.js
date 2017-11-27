@@ -965,6 +965,7 @@ router.get('/regions', function (req, res, next) {
 
 router.get('/regions/:region_id', function (req, res, next) {
 	Region.findById(req.params.region_id)
+	.populate('country')
 	.then(function (region) {
 		if (region) {
 			City.find({ region: region._id })
