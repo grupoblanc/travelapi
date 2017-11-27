@@ -4,7 +4,7 @@ block content
   div.row
     div.col-sm-8.mx-auto
       if region !== undefined
-        form.form(role="form" method="POST" action="create")
+        form.form(role="form" method="POST")
           div.form-group
             label(for="name") Nombre:
             input.form-control(name="name" id="name" placeholder="Nombre de la region" required value=region.name)

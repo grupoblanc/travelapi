@@ -1049,6 +1049,22 @@ router.get('/countries/:country_id', function (req, res, next) {
 	});
 });
 
+router.get('/tours/of/:id_parent', function (req, res) {
+	Tour.find({$or: [
+		{ region: req.params.id_parent },
+		{ city: req.params.id_parent },
+	]}).then(function (tours) {
+		return res.json({
+			tours: tours,
+			status: "OK"
+		});
+	}).catch(function (err) {
+		return res.json({
+			status: err.message
+		});
+	})
+});
+
 router.get('/where', function (req, res) {
 	let lat = req.query.lat;
 	let lng = req.query.lng;

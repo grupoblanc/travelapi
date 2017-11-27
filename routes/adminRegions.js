@@ -85,8 +85,20 @@ router.get('/edit/:region_id', function(req, res) {
 	});
 });
 
-router.post('/edit', function(req, res) {
-	return res.redirect("/api/site/admin/regions");
+router.post('/edit/:region_id', function (req, res) {
+	let regionId = req.params.region_id;
+	Region.update(
+		{
+		 _id: regionId
+	 },{
+		'name': req.body.name,
+		'country': req.body.country,
+	})
+	.then(function () {
+		return res.redirect('/api/site/admin/regions');
+	}).catch(function (err) {
+		return res.redirect('/api/site/admin/regions');
+	});
 });
 
 router.get('/remove/:region_id', function (req, res) {
